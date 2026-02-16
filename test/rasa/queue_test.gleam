@@ -237,6 +237,19 @@ pub fn delete_missing_test() {
   let assert Ok(Nil) = queue.delete(queue, 999)
 }
 
+pub fn drop_test() {
+  let queue = new_queue()
+
+  let assert Ok(Nil) = queue.drop(queue)
+}
+
+pub fn drop_error_test() {
+  let queue = new_queue()
+
+  let assert Ok(Nil) = queue.drop(queue)
+  let assert Error(Nil) = queue.drop(queue)
+}
+
 pub fn monotonic_at_test() {
   let queue = new_monotonic_queue()
 

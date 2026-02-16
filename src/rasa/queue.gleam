@@ -67,6 +67,11 @@ pub fn delete(queue: Queue(a), index: Int) -> Result(Nil, Nil) {
   rasa.delete(queue.store, index)
 }
 
+/// Deletes the queue.
+pub fn drop(queue: Queue(a)) -> Result(Nil, Nil) {
+  rasa.drop(queue.store)
+}
+
 /// Returns the first item in the queue without removing it from the queue.
 pub fn first(queue: Queue(a)) -> Result(#(Int, a), Nil) {
   rasa.first(queue.store)
