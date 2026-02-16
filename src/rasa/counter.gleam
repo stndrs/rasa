@@ -12,7 +12,7 @@ pub opaque type Counter {
 }
 
 /// Creates a `Counter` from a custom function. The function is called each
-/// time `next` is invoked and should return the next integer value.
+/// time the counter is passed to `counter.next`.
 pub fn new(handle_next: fn() -> Result(Int, Nil)) -> Counter {
   Counter(handle_next:)
 }
