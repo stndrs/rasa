@@ -17,8 +17,21 @@ pub fn new(handle_next: fn() -> Result(Int, Nil)) -> Counter {
   Counter(handle_next:)
 }
 
-type TimeUnit {
+/// The time unit for a `monotonic` counter. This is passed directly to
+/// Erlang's [monotonic_time][1].
+///
+/// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+pub type TimeUnit {
+  /// Monotonic time in seconds.
+  Second
+  /// Monotonic time in milliseconds.
+  Millisecond
+  /// Monotonic time in microseconds.
+  Microsecond
+  /// Monotonic time in nanoseconds.
   Nanosecond
+  /// Native time unit used by the erlang runtime system.
+  Native
 }
 
 type AtomicsRef
@@ -41,8 +54,8 @@ pub fn atomic() -> Counter {
 /// to `next` _may_ return the same result.
 ///
 /// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/0
-pub fn monotonic() -> Counter {
-  Counter(handle_next: fn() { Ok(monotonic_time_(Nanosecond)) })
+pub fn monotonic(unit: TimeUnit) -> Counter {
+  Counter(handle_next: fn() { Ok(monotonic_time_(unit)) })
 }
 
 /// Returns the next value from the `Counter`.

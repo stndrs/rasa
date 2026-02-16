@@ -31,7 +31,7 @@ pub fn independent_atomic_counter_test() {
 }
 
 pub fn monotonic_counter_test() {
-  let c = counter.monotonic()
+  let c = counter.monotonic(counter.Nanosecond)
 
   let assert Ok(t1) = counter.next(c)
 
@@ -39,5 +39,35 @@ pub fn monotonic_counter_test() {
 
   let assert Ok(t2) = counter.next(c)
 
-  assert t1 <= t2
+  assert t1 < t2
+}
+
+pub fn monotonic_millisecond_counter_test() {
+  let c = counter.monotonic(counter.Millisecond)
+
+  let assert Ok(t1) = counter.next(c)
+
+  process.sleep(1)
+
+  let assert Ok(t2) = counter.next(c)
+
+  assert t1 < t2
+}
+
+pub fn monotonic_microsecond_counter_test() {
+  let c = counter.monotonic(counter.Microsecond)
+
+  let assert Ok(t1) = counter.next(c)
+
+  process.sleep(1)
+
+  let assert Ok(t2) = counter.next(c)
+
+  assert t1 < t2
+}
+
+pub fn monotonic_second_counter_test() {
+  let c = counter.monotonic(counter.Native)
+
+  let assert Ok(_t1) = counter.next(c)
 }

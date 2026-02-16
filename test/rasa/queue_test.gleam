@@ -258,7 +258,7 @@ fn new_queue() {
 }
 
 fn new_monotonic_queue() {
-  let counter = counter.monotonic()
+  let counter = counter.monotonic(counter.Nanosecond)
 
   rasa.build("new_monotonic_queue")
   |> rasa.with_access(rasa.Private)
