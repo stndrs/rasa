@@ -9,7 +9,7 @@
 //// backed by [erlang counters][1] and are therefore guaranteed atomicity.
 ////
 //// If using `counter.monotonic`, each new value comes from calling
-//// [monotonic_time][2] with a `nanosecond` time unit. Since `monotonic_time`
+//// [monotonic_time][2] with the specified time unit. Since `monotonic_time`
 //// can produce the same result from consecutive calls, it is possible for
 //// calls to `queue.push` to return an error if that index key was previously
 //// inserted into the queue.

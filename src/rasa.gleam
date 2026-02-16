@@ -93,8 +93,8 @@ pub fn lookup(table: Table(a, b), key: a) -> Result(b, Nil) {
 /// [ets docs][1] for more details.
 ///
 /// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html#first/1
-pub fn first(rasa: Table(a, b)) -> Result(#(a, b), Nil) {
-  ets_first_lookup_(rasa.name)
+pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
+  ets_first_lookup_(table.name)
 }
 
 /// Returns the last key-value pair in the table without removing it from the
@@ -102,19 +102,19 @@ pub fn first(rasa: Table(a, b)) -> Result(#(a, b), Nil) {
 /// [ets docs][1] for more details.
 ///
 /// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html#last/1
-pub fn last(rasa: Table(a, b)) -> Result(#(a, b), Nil) {
-  ets_last_lookup_(rasa.name)
+pub fn last(table: Table(a, b)) -> Result(#(a, b), Nil) {
+  ets_last_lookup_(table.name)
 }
 
 /// Returns all entries in the table as a list of key-value tuples.
-pub fn to_list(rasa: Table(a, b)) -> Result(List(#(a, b)), Nil) {
-  ets_to_list_(rasa.name)
+pub fn to_list(table: Table(a, b)) -> Result(List(#(a, b)), Nil) {
+  ets_to_list_(table.name)
 }
 
 /// Determines whether or not the table is empty. Returns `True` if the table
 /// does not exist.
-pub fn is_empty(rasa: Table(a, b)) -> Bool {
-  first(rasa)
+pub fn is_empty(table: Table(a, b)) -> Bool {
+  first(table)
   |> result.replace(False)
   |> result.unwrap(True)
 }
@@ -130,18 +130,18 @@ pub fn drop(table: Table(a, b)) -> Result(Nil, Nil) {
 }
 
 /// Returns the size of the table.
-pub fn size(rasa: Table(a, b)) -> Result(Int, Nil) {
-  ets_info_(rasa.name, Size)
+pub fn size(table: Table(a, b)) -> Result(Int, Nil) {
+  ets_info_(table.name, Size)
 }
 
 /// Returns the table's `Kind` (`Set` or `OrderedSet`).
-pub fn kind(rasa: Table(a, b)) -> Result(Kind, Nil) {
-  ets_info_(rasa.name, Type)
+pub fn kind(table: Table(a, b)) -> Result(Kind, Nil) {
+  ets_info_(table.name, Type)
 }
 
 /// Returns the table's `Access` level (`Public`, `Protected`, or `Private`).
-pub fn access(rasa: Table(a, b)) -> Result(Access, Nil) {
-  ets_info_(rasa.name, Protection)
+pub fn access(table: Table(a, b)) -> Result(Access, Nil) {
+  ets_info_(table.name, Protection)
 }
 
 type InfoItem {

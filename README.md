@@ -73,7 +73,7 @@ pub fn main() -> Nil {
   let assert Ok(2) = counter.next(c)
 
   // Monotonic time counter with nanosecond precision
-  let m = counter.monotonic()
+  let m = counter.monotonic(counter.Nanosecond)
   let assert Ok(_t) = counter.next(m)
 
   // Custom counter from any function
@@ -87,6 +87,5 @@ Further documentation can be found at <https://hexdocs.pm/rasa>.
 ## Development
 
 ```sh
-gleam run   # Run the project
 gleam test  # Run the tests
 ```

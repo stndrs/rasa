@@ -53,7 +53,7 @@ pub fn atomic() -> Counter {
 /// will provide monotonically increasing time values, but consecutive calls
 /// to `next` _may_ return the same result.
 ///
-/// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/0
+/// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
 pub fn monotonic(unit: TimeUnit) -> Counter {
   Counter(handle_next: fn() { Ok(monotonic_time_(unit)) })
 }

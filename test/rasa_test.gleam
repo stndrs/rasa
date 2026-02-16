@@ -63,15 +63,7 @@ pub fn drop_test() {
 }
 
 pub fn first_test() {
-  let table = rasa.build("rasa_test") |> rasa.table
-
-  let assert Ok(Nil) = rasa.insert(table, "a", 10)
-  let assert Ok(Nil) = rasa.insert(table, "b", 20)
-
-  let assert Ok(#("b", 20)) = rasa.first(table)
-}
-
-pub fn ordered_set_first_test() {
+  // Order is only guaranteed with `OrderedSet`
   let table =
     rasa.build("rasa_test")
     |> rasa.with_kind(rasa.OrderedSet)
@@ -90,7 +82,11 @@ pub fn first_empty_test() {
 }
 
 pub fn last_test() {
-  let table = rasa.build("rasa_test") |> rasa.table
+  // Order is only guaranteed with `OrderedSet`
+  let table =
+    rasa.build("rasa_test")
+    |> rasa.with_kind(rasa.OrderedSet)
+    |> rasa.table
 
   let assert Ok(Nil) = rasa.insert(table, "a", 10)
   let assert Ok(Nil) = rasa.insert(table, "b", 20)
@@ -117,7 +113,11 @@ pub fn ordered_set_last_test() {
 }
 
 pub fn to_list_test() {
-  let table = rasa.build("rasa_test") |> rasa.table
+  // Order is only guaranteed with `OrderedSet`
+  let table =
+    rasa.build("rasa_test")
+    |> rasa.with_kind(rasa.OrderedSet)
+    |> rasa.table
 
   let assert Ok([]) = rasa.to_list(table)
 
