@@ -1,23 +1,23 @@
 import gleam/erlang/process
 import rasa/counter
 
-pub fn integer_counter_test() {
-  let c = counter.integer()
+pub fn atomic_counter_test() {
+  let c = counter.atomic()
 
   let assert Ok(1) = counter.next(c)
 }
 
-pub fn integer_multiple_test() {
-  let c = counter.integer()
+pub fn atomic_multiple_test() {
+  let c = counter.atomic()
 
   let assert Ok(1) = counter.next(c)
   let assert Ok(2) = counter.next(c)
   let assert Ok(3) = counter.next(c)
 }
 
-pub fn independent_integer_counter_test() {
-  let c1 = counter.integer()
-  let c2 = counter.integer()
+pub fn independent_atomic_counter_test() {
+  let c1 = counter.atomic()
+  let c2 = counter.atomic()
 
   let assert Ok(1) = counter.next(c1)
   let assert Ok(2) = counter.next(c1)

@@ -216,7 +216,7 @@ pub fn monotonic_at_test() {
 }
 
 fn new_queue() {
-  let counter = counter.integer()
+  let counter = counter.atomic()
 
   rasa.build("new_queue")
   |> rasa.private
