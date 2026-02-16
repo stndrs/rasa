@@ -38,6 +38,9 @@ pub fn new(builder: rasa.Builder, counter: Counter) -> Queue(a) {
 }
 
 /// Inserts a value into the queue. Returns the index assigned to the value.
+/// For queues using a counter that doesn't guarantee new values on each
+/// `next` call, `push` can return an error if a previously used index key
+/// is reused.
 pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
   use index <- result.try(counter.next(queue.counter))
   use _ <- result.map(rasa.insert_new(queue.store, index, value))

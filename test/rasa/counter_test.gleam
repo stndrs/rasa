@@ -67,6 +67,12 @@ pub fn monotonic_microsecond_counter_test() {
 }
 
 pub fn monotonic_second_counter_test() {
+  let c = counter.monotonic(counter.Second)
+
+  let assert Ok(_t1) = counter.next(c)
+}
+
+pub fn monotonic_native_counter_test() {
   let c = counter.monotonic(counter.Native)
 
   let assert Ok(_t1) = counter.next(c)
