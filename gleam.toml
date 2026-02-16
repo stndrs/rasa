@@ -7,7 +7,7 @@ target = "erlang"
 
 description = "ETS backed data stores"
 licences = ["MIT"]
-repository = { type = "github", user = "stndrs", repo = "https://github.com/stndrs/rasa" }
+repository = { type = "github", user = "stndrs", repo = "rasa" }
 # links = [{ title = "Website", href = "" }]
 #
 # For a full reference of all the available options, you can have a look at

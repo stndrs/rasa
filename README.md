@@ -15,22 +15,23 @@ gleam add rasa@1
 
 ### Tables
 
-Key-value stores backed by ETS. Configure the table type (`set` or `ordered_set`) and access level (`public`, `protected`, or `private`) using the builder pattern.
+Key-value stores backed by ETS. Configure the table type (`Set` or `OrderedSet`) and access level (`Public`, `Protected`, or `Private`) using the builder pattern.
 
 ```gleam
 import rasa
 
 pub fn main() -> Nil {
   let tabula = rasa.build("blank_slate")
-  |> rasa.set
-  |> rasa.private
+  |> rasa.with_kind(rasa.Set)
+  |> rasa.with_access(rasa.Private)
   |> rasa.table
 
   let assert Ok(Nil) = rasa.insert(tabula, "nature", 30)
   let assert Ok(Nil) = rasa.insert(tabula, "nurture", 70)
 
+  // insert_new only inserts if the key doesn't already exist
+  let assert Error(Nil) = rasa.insert_new(tabula, "nature", 0)
   let assert Ok(30) = rasa.lookup(tabula, "nature")
-  let assert Ok(70) = rasa.lookup(tabula, "nurture")
 }
 ```
 
@@ -45,13 +46,15 @@ import rasa/queue
 
 pub fn main() -> Nil {
   let q = rasa.build("tasks")
-  |> rasa.private
+  |> rasa.with_access(rasa.Private)
   |> queue.new(counter.atomic())
 
-  let assert Ok(_) = queue.push(q, "first")
-  let assert Ok(_) = queue.push(q, "second")
+  let assert Ok(1) = queue.push(q, "first")
+  let assert Ok(2) = queue.push(q, "second")
 
-  let assert Ok("first") = queue.pop(q)
+  // Remove an item by index without popping
+  let assert Ok(Nil) = queue.delete(q, 1)
+
   let assert Ok("second") = queue.pop(q)
 }
 ```
@@ -64,14 +67,18 @@ Atomic counters for generating sequential or time-based indices.
 import rasa/counter
 
 pub fn main() -> Nil {
-  // Atomic counter
+  // Atomic counter that increments by 1 each call
   let c = counter.atomic()
   let assert Ok(1) = counter.next(c)
   let assert Ok(2) = counter.next(c)
 
   // Monotonic time counter with nanosecond precision
   let m = counter.monotonic()
-  let assert Ok(_timestamp) = counter.next(m)
+  let assert Ok(_t) = counter.next(m)
+
+  // Custom counter from any function
+  let always_99 = counter.new(fn() { Ok(99) })
+  let assert Ok(99) = counter.next(always_99)
 }
 ```
 
