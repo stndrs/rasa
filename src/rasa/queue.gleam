@@ -22,6 +22,20 @@ import gleam/result
 import rasa
 import rasa/counter.{type Counter}
 
+pub opaque type Builder {
+  Builder(name: String, access: rasa.Access)
+}
+
+/// Creates a new `Builder` with the given name. Defaults to `Protected` access.
+pub fn build(name: String) -> Builder {
+  Builder(name:, access: rasa.Protected)
+}
+
+/// Sets the access level on the builder.
+pub fn with_access(builder: Builder, access: rasa.Access) -> Builder {
+  Builder(..builder, access:)
+}
+
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
 /// `Counter`.
 pub opaque type Queue(a) {
@@ -30,8 +44,9 @@ pub opaque type Queue(a) {
 
 /// Creates a new Queue from a `Builder`. This function will update the builder
 /// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
-pub fn new(builder: rasa.Builder, counter: Counter) -> Queue(a) {
-  builder
+pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
+  rasa.build(builder.name)
+  |> rasa.with_access(builder.access)
   |> rasa.with_kind(rasa.OrderedSet)
   |> rasa.table
   |> Queue(counter)
