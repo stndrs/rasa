@@ -34,7 +34,7 @@ pub type TimeUnit {
   Native
 }
 
-type AtomicsRef
+type CountersRef
 
 /// Returns an atomic `Counter` that increases by 1 every time it's passed to
 /// `next`.
@@ -64,13 +64,13 @@ pub fn next(counter: Counter) -> Result(Int, Nil) {
 }
 
 @external(erlang, "rasa_ffi", "counters_new")
-fn counters_new_(size: Int) -> AtomicsRef
+fn counters_new_(size: Int) -> CountersRef
 
 @external(erlang, "rasa_ffi", "counters_add")
-fn counters_add_(ref: AtomicsRef, idx: Int, num: Int) -> Result(Nil, Nil)
+fn counters_add_(ref: CountersRef, idx: Int, num: Int) -> Result(Nil, Nil)
 
 @external(erlang, "rasa_ffi", "counters_get")
-fn counters_get_(ref: AtomicsRef, idx: Int) -> Result(Int, Nil)
+fn counters_get_(ref: CountersRef, idx: Int) -> Result(Int, Nil)
 
 @external(erlang, "erlang", "monotonic_time")
 fn monotonic_time_(unit: TimeUnit) -> Int
