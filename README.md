@@ -45,8 +45,8 @@ import rasa/counter
 import rasa/queue
 
 pub fn main() -> Nil {
-  let q = rasa.build("tasks")
-  |> rasa.with_access(rasa.Private)
+  let q = queue.build("tasks")
+  |> queue.with_access(rasa.Private)
   |> queue.new(counter.atomic())
 
   let assert Ok(1) = queue.push(q, "first")

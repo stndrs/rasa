@@ -130,7 +130,7 @@ pub fn monotonic_push_test() {
 
   let assert Ok(t2) = queue.push(queue, 10)
 
-  assert t1 <= t2
+  assert t1 < t2
 }
 
 pub fn monotonic_pop_test() {
