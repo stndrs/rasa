@@ -13,6 +13,23 @@ pub fn insert_test() {
   let assert Ok(Nil) = rasa.insert(table, "key", 10)
 }
 
+pub fn insert_new_test() {
+  let table =
+    rasa.build("rasa_test")
+    |> rasa.table
+
+  let assert Ok(Nil) = rasa.insert_new(table, "key", 10)
+}
+
+pub fn insert_new_error_test() {
+  let table =
+    rasa.build("rasa_test")
+    |> rasa.table
+
+  let assert Ok(Nil) = rasa.insert_new(table, "key", 10)
+  let assert Error(Nil) = rasa.insert_new(table, "key", 20)
+}
+
 pub fn lookup_test() {
   let table = rasa.build("rasa_test") |> rasa.table
 

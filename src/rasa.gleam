@@ -82,6 +82,10 @@ pub fn insert(table: Table(a, b), key: a, value: b) -> Result(Nil, Nil) {
   ets_insert_(table.name, key, value)
 }
 
+pub fn insert_new(table: Table(a, b), key: a, value: b) -> Result(Nil, Nil) {
+  ets_insert_new_(table.name, key, value)
+}
+
 /// Returns the value associated with the given key, or `Error(Nil)` if
 /// the key does not exist.
 pub fn lookup(table: Table(a, b), key: a) -> Result(b, Nil) {
@@ -161,6 +165,9 @@ fn ets_new_(name: Atom, kind: Kind, access: Access) -> Atom
 
 @external(erlang, "rasa_ffi", "ets_insert")
 fn ets_insert_(name: Atom, key: a, val: b) -> Result(Nil, Nil)
+
+@external(erlang, "rasa_ffi", "ets_insert_new")
+fn ets_insert_new_(name: Atom, key: a, val: b) -> Result(Nil, Nil)
 
 @external(erlang, "rasa_ffi", "ets_lookup")
 fn ets_lookup_(name: Atom, key: a) -> Result(b, Nil)

@@ -9,6 +9,21 @@ pub fn push_test() {
   let assert Ok(1) = queue.push(queue, 10)
 }
 
+pub fn push_error_test() {
+  // Counter where subsequent calls return the same value
+  let counter = counter.new(fn() { Ok(99) })
+
+  let queue =
+    rasa.build("new_queue")
+    |> rasa.private
+    |> queue.new(counter)
+
+  let assert Ok(99) = queue.push(queue, 10)
+  // Subsequent calls to `queue.push` fail due to attempting to
+  // insert new value in the queue at an index already in use.
+  let assert Error(Nil) = queue.push(queue, 20)
+}
+
 pub fn pop_test() {
   let queue = new_queue()
 

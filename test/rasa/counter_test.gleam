@@ -1,6 +1,12 @@
 import gleam/erlang/process
 import rasa/counter
 
+pub fn new_test() {
+  let c = counter.new(fn() { Ok(99) })
+
+  let assert Ok(99) = counter.next(c)
+}
+
 pub fn atomic_counter_test() {
   let c = counter.atomic()
 

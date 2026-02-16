@@ -7,6 +7,7 @@
   counters_get/2,
   ets_new/3,
   ets_insert/3,
+  ets_insert_new/3,
   ets_first_lookup/1,
   ets_last_lookup/1,
   ets_lookup/2,
@@ -30,6 +31,14 @@ ets_insert(Name, Key, Value) ->
     ets:insert(Name, {Key, Value}),
 
     {ok, nil}
+  end).
+
+ets_insert_new(Name, Key, Value) ->
+  with_rescue(fun() ->
+    case ets:insert_new(Name, {Key, Value}) of
+      true -> {ok, nil};
+      false -> {error, nil}
+    end
   end).
 
 ets_first_lookup(Name) ->

@@ -1,3 +1,22 @@
+//// This module provides a `Queue` built using a `rasa.Table`. Queues created
+//// by this module are built using `ordered_set` ETS tables. Ordered sets use
+//// a binary search tree so insert and lookups are performed in logarithmic
+//// time. These operations will take longer as the queue grows in size.
+////
+//// `Queue`s require a `Counter` that provide ever increasing integer values
+//// used as keys for the underlying `rasa.Table`. If using `counter.atomic`,
+//// each new integer value is 1 greater than the previous. Atomic counters are
+//// backed by [erlang counters][1] and are therefore guaranteed atomicity.
+////
+//// If using `counter.monotonic`, each new value comes from calling
+//// [monotonic_time][2] with a `nanosecond` time unit. Since `monotonic_time`
+//// can produce the same result from consecutive calls, it is possible for
+//// calls to `queue.push` to return an error if that index key was previously
+//// inserted into the queue.
+////
+//// [1]: https://www.erlang.org/doc/apps/erts/counters.html
+//// [2]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+
 import gleam/list
 import gleam/result
 import rasa
@@ -21,7 +40,7 @@ pub fn new(builder: rasa.Builder, counter: Counter) -> Queue(a) {
 /// Inserts a value into the queue. Returns the index assigned to the value.
 pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
   use index <- result.try(counter.next(queue.counter))
-  use _ <- result.map(rasa.insert(queue.store, index, value))
+  use _ <- result.map(rasa.insert_new(queue.store, index, value))
 
   index
 }

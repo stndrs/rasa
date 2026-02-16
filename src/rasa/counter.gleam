@@ -1,8 +1,14 @@
 import gleam/result
 
-/// An counter that produces integer values.
+/// A counter that produces integer values.
 pub opaque type Counter {
   Counter(handle_next: fn() -> Result(Int, Nil))
+}
+
+/// Creates a `Counter` from a custom function. The function is called each
+/// time `next` is invoked and should return the next integer value.
+pub fn new(handle_next: fn() -> Result(Int, Nil)) -> Counter {
+  Counter(handle_next:)
 }
 
 type TimeUnit {
