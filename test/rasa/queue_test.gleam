@@ -43,7 +43,7 @@ pub fn first_test() {
   let assert Ok(1) = queue.push(queue, 10)
   let assert Ok(2) = queue.push(queue, 20)
 
-  let assert Ok(10) = queue.first(queue)
+  let assert Ok(#(1, 10)) = queue.first(queue)
 }
 
 pub fn first_empty_test() {
@@ -58,7 +58,7 @@ pub fn last_test() {
   let assert Ok(1) = queue.push(queue, 10)
   let assert Ok(2) = queue.push(queue, 20)
 
-  let assert Ok(20) = queue.last(queue)
+  let assert Ok(#(2, 20)) = queue.last(queue)
 }
 
 pub fn last_empty_test() {
@@ -152,7 +152,7 @@ pub fn monotonic_first_test() {
   let assert Ok(_t1) = queue.push(queue, 10)
   let assert Ok(_t2) = queue.push(queue, 20)
 
-  let assert Ok(10) = queue.first(queue)
+  let assert Ok(#(_, 10)) = queue.first(queue)
 }
 
 pub fn monotonic_first_empty_test() {
@@ -167,7 +167,7 @@ pub fn monotonic_last_test() {
   let assert Ok(_t1) = queue.push(queue, 10)
   let assert Ok(_t2) = queue.push(queue, 20)
 
-  let assert Ok(20) = queue.last(queue)
+  let assert Ok(#(_, 20)) = queue.last(queue)
 }
 
 pub fn monotonic_last_empty_test() {

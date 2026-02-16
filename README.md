@@ -46,7 +46,7 @@ import rasa/queue
 pub fn main() -> Nil {
   let q = rasa.build("tasks")
   |> rasa.private
-  |> queue.new(counter.integer())
+  |> queue.new(counter.atomic())
 
   let assert Ok(_) = queue.push(q, "first")
   let assert Ok(_) = queue.push(q, "second")
@@ -64,8 +64,8 @@ Atomic counters for generating sequential or time-based indices.
 import rasa/counter
 
 pub fn main() -> Nil {
-  // Incrementing integer counter
-  let c = counter.integer()
+  // Atomic counter
+  let c = counter.atomic()
   let assert Ok(1) = counter.next(c)
   let assert Ok(2) = counter.next(c)
 

@@ -3,7 +3,7 @@
 //// a binary search tree so insert and lookups are performed in logarithmic
 //// time. These operations will take longer as the queue grows in size.
 ////
-//// `Queue`s require a `Counter` that provide ever increasing integer values
+//// `Queue`s require a `Counter` that provide ever-increasing integer values
 //// used as keys for the underlying `rasa.Table`. If using `counter.atomic`,
 //// each new integer value is 1 greater than the previous. Atomic counters are
 //// backed by [erlang counters][1] and are therefore guaranteed atomicity.
@@ -59,16 +59,19 @@ pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
   rasa.lookup(queue.store, index)
 }
 
+/// Removes the item at the given index from the queue.
+pub fn delete(queue: Queue(a), index: Int) -> Result(Nil, Nil) {
+  rasa.delete(queue.store, index)
+}
+
 /// Returns the first item in the queue without removing it from the queue.
-pub fn first(queue: Queue(a)) -> Result(a, Nil) {
+pub fn first(queue: Queue(a)) -> Result(#(Int, a), Nil) {
   rasa.first(queue.store)
-  |> result.map(fn(key_val) { key_val.1 })
 }
 
 /// Returns the last item in the queue without removing it from the queue.
-pub fn last(queue: Queue(a)) -> Result(a, Nil) {
+pub fn last(queue: Queue(a)) -> Result(#(Int, a), Nil) {
   rasa.last(queue.store)
-  |> result.map(fn(key_val) { key_val.1 })
 }
 
 /// Returns the queue's values as a list in insertion order.

@@ -33,27 +33,27 @@ pub fn build(name: String) -> Builder {
   Builder(name:, kind: Set, access: Protected)
 }
 
-/// Configures the builder to create a `set` table.
+/// Configures the builder to create a `Set` table.
 pub fn set(builder: Builder) -> Builder {
   Builder(..builder, kind: Set)
 }
 
-/// Configures the builder to create an `ordered_set` table.
+/// Configures the builder to create an `OrderedSet` table.
 pub fn ordered_set(builder: Builder) -> Builder {
   Builder(..builder, kind: OrderedSet)
 }
 
-/// Configures the builder to create a `public` table.
+/// Configures the builder to create a `Public` table.
 pub fn public(builder: Builder) -> Builder {
   Builder(..builder, access: Public)
 }
 
-/// Configures the builder to create a `protected` table.
+/// Configures the builder to create a `Protected` table.
 pub fn protected(builder: Builder) -> Builder {
   Builder(..builder, access: Protected)
 }
 
-/// Configures the builder to create a `private` table.
+/// Configures the builder to create a `Private` table.
 pub fn private(builder: Builder) -> Builder {
   Builder(..builder, access: Private)
 }
@@ -82,6 +82,8 @@ pub fn insert(table: Table(a, b), key: a, value: b) -> Result(Nil, Nil) {
   ets_insert_(table.name, key, value)
 }
 
+/// Inserts a key and value into the table only if the key does not already
+/// exist. Returns `Error(Nil)` if the key is already present.
 pub fn insert_new(table: Table(a, b), key: a, value: b) -> Result(Nil, Nil) {
   ets_insert_new_(table.name, key, value)
 }
@@ -115,7 +117,7 @@ pub fn to_list(rasa: Table(a, b)) -> Result(List(#(a, b)), Nil) {
   ets_to_list_(rasa.name)
 }
 
-/// Determines whether or not the table is empty. Returns True if the table
+/// Determines whether or not the table is empty. Returns `True` if the table
 /// does not exist.
 pub fn is_empty(rasa: Table(a, b)) -> Bool {
   first(rasa)
