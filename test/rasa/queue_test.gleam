@@ -218,6 +218,25 @@ pub fn monotonic_size_test() {
   let assert Ok(2) = queue.size(queue)
 }
 
+pub fn delete_test() {
+  let queue = new_queue()
+
+  let assert Ok(1) = queue.push(queue, 10)
+  let assert Ok(2) = queue.push(queue, 20)
+
+  let assert Ok(Nil) = queue.delete(queue, 1)
+
+  let assert Error(Nil) = queue.at(queue, 1)
+  let assert Ok(20) = queue.at(queue, 2)
+  let assert Ok(1) = queue.size(queue)
+}
+
+pub fn delete_missing_test() {
+  let queue = new_queue()
+
+  let assert Ok(Nil) = queue.delete(queue, 999)
+}
+
 pub fn monotonic_at_test() {
   let queue = new_monotonic_queue()
 

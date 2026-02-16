@@ -3,7 +3,6 @@
 -export([
   counters_new/1,
   counters_add/3,
-  counters_sub/3,
   counters_get/2,
   ets_new/3,
   ets_insert/3,
@@ -102,13 +101,6 @@ counters_new(Size) ->
 counters_add(Counter, Ix, Incr) ->
   with_rescue(fun() ->
     counters:add(Counter, Ix, Incr),
-
-    {ok, nil}
-  end).
-
-counters_sub(Counter, Ix, Incr) ->
-  with_rescue(fun() ->
-    counters:sub(Counter, Ix, Incr),
 
     {ok, nil}
   end).
