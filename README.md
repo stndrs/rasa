@@ -22,7 +22,7 @@ pub fn main() -> Nil {
   let assert Ok(Nil) = rasa.insert(tabula, "nurture", 70)
 
   let assert Ok(30) = rasa.lookup(tabula, "nature")
-  let assert Ok(70) = rasa.lookup(tabula, "nuture")
+  let assert Ok(70) = rasa.lookup(tabula, "nurture")
 }
 ```
 

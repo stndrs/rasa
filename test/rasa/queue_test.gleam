@@ -1,4 +1,5 @@
 import gleam/erlang/process
+import rasa
 import rasa/counter
 import rasa/queue
 
@@ -217,11 +218,15 @@ pub fn monotonic_at_test() {
 fn new_queue() {
   let assert Ok(counter) = counter.integer()
 
-  queue.new("new_queue", counter)
+  rasa.build("new_queue")
+  |> rasa.private
+  |> queue.new(counter)
 }
 
 fn new_monotonic_queue() {
   let counter = counter.monotonic()
 
-  queue.new("new_monotonic_queue", counter)
+  rasa.build("new_monotonic_queue")
+  |> rasa.private
+  |> queue.new(counter)
 }

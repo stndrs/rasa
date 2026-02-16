@@ -8,11 +8,11 @@ pub opaque type Queue(a) {
   Queue(store: rasa.Table(Int, a), counter: Counter)
 }
 
-/// Creates a new Queue.
-pub fn new(name: String, counter: Counter) -> Queue(a) {
-  rasa.build(name)
+/// Creates a new Queue from a `Builder`. This function will update the builder
+/// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
+pub fn new(builder: rasa.Builder, counter: Counter) -> Queue(a) {
+  builder
   |> rasa.ordered_set
-  |> rasa.private
   |> rasa.table
   |> Queue(counter)
 }
@@ -33,8 +33,9 @@ pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
   value
 }
 
-pub fn at(queue: Queue(a), key: Int) -> Result(a, Nil) {
-  rasa.lookup(queue.store, key)
+/// Returns the value stored in the queue at a given index.
+pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
+  rasa.lookup(queue.store, index)
 }
 
 /// Returns the first item in the queue without removing it from the queue.
