@@ -11,8 +11,8 @@ type TimeUnit {
 type AtomicsRef
 
 /// Returns a `Counter` that increases by 1 every time it's passed to `next`
-pub fn integer() -> Result(Counter, Nil) {
-  use ref <- result.map(counters_new_(1))
+pub fn integer() -> Counter {
+  let ref = counters_new_(1)
 
   let handle_next = fn() {
     counters_add_(ref, 1, 1)
@@ -37,7 +37,7 @@ pub fn next(counter: Counter) -> Result(Int, Nil) {
 }
 
 @external(erlang, "rasa_ffi", "counters_new")
-fn counters_new_(size: Int) -> Result(AtomicsRef, Nil)
+fn counters_new_(size: Int) -> AtomicsRef
 
 @external(erlang, "rasa_ffi", "counters_add")
 fn counters_add_(ref: AtomicsRef, idx: Int, num: Int) -> Result(Nil, Nil)

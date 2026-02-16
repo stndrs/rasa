@@ -216,7 +216,7 @@ pub fn monotonic_at_test() {
 }
 
 fn new_queue() {
-  let assert Ok(counter) = counter.integer()
+  let counter = counter.integer()
 
   rasa.build("new_queue")
   |> rasa.private

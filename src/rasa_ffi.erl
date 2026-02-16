@@ -88,11 +88,7 @@ ets_info(Name, Item) ->
 %%% Counters %%%
 
 counters_new(Size) ->
-  with_rescue(fun() ->
-    Ref = counters:new(Size, [atomics]),
-
-    {ok, Ref}
-  end).
+  counters:new(Size, [atomics]).
 
 counters_add(Counter, Ix, Incr) ->
   with_rescue(fun() ->

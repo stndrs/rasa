@@ -2,13 +2,13 @@ import gleam/erlang/process
 import rasa/counter
 
 pub fn integer_counter_test() {
-  let assert Ok(c) = counter.integer()
+  let c = counter.integer()
 
   let assert Ok(1) = counter.next(c)
 }
 
 pub fn integer_multiple_test() {
-  let assert Ok(c) = counter.integer()
+  let c = counter.integer()
 
   let assert Ok(1) = counter.next(c)
   let assert Ok(2) = counter.next(c)
@@ -16,8 +16,8 @@ pub fn integer_multiple_test() {
 }
 
 pub fn independent_integer_counter_test() {
-  let assert Ok(c1) = counter.integer()
-  let assert Ok(c2) = counter.integer()
+  let c1 = counter.integer()
+  let c2 = counter.integer()
 
   let assert Ok(1) = counter.next(c1)
   let assert Ok(2) = counter.next(c1)
