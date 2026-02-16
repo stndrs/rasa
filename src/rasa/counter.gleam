@@ -1,3 +1,9 @@
+//// Atomic counters for generating sequential integer values. Counters are
+//// used by `rasa/queue` to index entries but can also be used on their own.
+//// Use `atomic` for a simple incrementing counter, `monotonic` for
+//// nanosecond-precision monotonic time values, or `new` to supply a custom
+//// function.
+
 import gleam/result
 
 /// A counter that produces integer values.

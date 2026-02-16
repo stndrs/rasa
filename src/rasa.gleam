@@ -1,3 +1,12 @@
+//// Type-safe key-value tables backed by Erlang's [ETS][1]. Tables are
+//// configured using a builder pattern, where you specify the table type
+//// (`Set` or `OrderedSet`) and access level (`Public`, `Protected`, or
+//// `Private`) before creating the table.
+////
+//// Requires OTP 27 or later.
+////
+//// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html
+
 import gleam/erlang/atom.{type Atom}
 import gleam/int
 import gleam/result
