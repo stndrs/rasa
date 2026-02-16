@@ -32,7 +32,7 @@ pub opaque type Queue(a) {
 /// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
 pub fn new(builder: rasa.Builder, counter: Counter) -> Queue(a) {
   builder
-  |> rasa.ordered_set
+  |> rasa.with_kind(rasa.OrderedSet)
   |> rasa.table
   |> Queue(counter)
 }

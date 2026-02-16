@@ -74,7 +74,7 @@ pub fn first_test() {
 pub fn ordered_set_first_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.ordered_set
+    |> rasa.with_kind(rasa.OrderedSet)
     |> rasa.table
 
   let assert Ok(Nil) = rasa.insert(table, "a", 10)
@@ -107,7 +107,7 @@ pub fn last_empty_test() {
 pub fn ordered_set_last_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.ordered_set
+    |> rasa.with_kind(rasa.OrderedSet)
     |> rasa.table
 
   let assert Ok(Nil) = rasa.insert(table, "a", 10)
@@ -171,7 +171,7 @@ pub fn size_test() {
 pub fn private_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.private
+    |> rasa.with_access(rasa.Private)
     |> rasa.table
 
   let assert Ok(rasa.Private) = rasa.access(table)
@@ -180,7 +180,7 @@ pub fn private_test() {
 pub fn protected_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.protected
+    |> rasa.with_access(rasa.Protected)
     |> rasa.table
 
   let assert Ok(rasa.Protected) = rasa.access(table)
@@ -189,7 +189,7 @@ pub fn protected_test() {
 pub fn public_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.public
+    |> rasa.with_access(rasa.Public)
     |> rasa.table
 
   let assert Ok(rasa.Public) = rasa.access(table)
@@ -198,7 +198,7 @@ pub fn public_test() {
 pub fn set_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.set
+    |> rasa.with_kind(rasa.Set)
     |> rasa.table
 
   let assert Ok(rasa.Set) = rasa.kind(table)
@@ -207,7 +207,7 @@ pub fn set_test() {
 pub fn ordered_set_test() {
   let table =
     rasa.build("rasa_test")
-    |> rasa.ordered_set
+    |> rasa.with_kind(rasa.OrderedSet)
     |> rasa.table
 
   let assert Ok(rasa.OrderedSet) = rasa.kind(table)

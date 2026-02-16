@@ -15,7 +15,7 @@ pub fn push_error_test() {
 
   let queue =
     rasa.build("new_queue")
-    |> rasa.private
+    |> rasa.with_access(rasa.Private)
     |> queue.new(counter)
 
   let assert Ok(99) = queue.push(queue, 10)
@@ -253,7 +253,7 @@ fn new_queue() {
   let counter = counter.atomic()
 
   rasa.build("new_queue")
-  |> rasa.private
+  |> rasa.with_access(rasa.Private)
   |> queue.new(counter)
 }
 
@@ -261,6 +261,6 @@ fn new_monotonic_queue() {
   let counter = counter.monotonic()
 
   rasa.build("new_monotonic_queue")
-  |> rasa.private
+  |> rasa.with_access(rasa.Private)
   |> queue.new(counter)
 }

@@ -42,29 +42,14 @@ pub fn build(name: String) -> Builder {
   Builder(name:, kind: Set, access: Protected)
 }
 
-/// Configures the builder to create a `Set` table.
-pub fn set(builder: Builder) -> Builder {
-  Builder(..builder, kind: Set)
+/// Sets the table type on the builder.
+pub fn with_kind(builder: Builder, kind: Kind) -> Builder {
+  Builder(..builder, kind:)
 }
 
-/// Configures the builder to create an `OrderedSet` table.
-pub fn ordered_set(builder: Builder) -> Builder {
-  Builder(..builder, kind: OrderedSet)
-}
-
-/// Configures the builder to create a `Public` table.
-pub fn public(builder: Builder) -> Builder {
-  Builder(..builder, access: Public)
-}
-
-/// Configures the builder to create a `Protected` table.
-pub fn protected(builder: Builder) -> Builder {
-  Builder(..builder, access: Protected)
-}
-
-/// Configures the builder to create a `Private` table.
-pub fn private(builder: Builder) -> Builder {
-  Builder(..builder, access: Private)
+/// Sets the access level on the builder.
+pub fn with_access(builder: Builder, access: Access) -> Builder {
+  Builder(..builder, access:)
 }
 
 /// An ETS table for storing key/value pairs
