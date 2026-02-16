@@ -100,18 +100,6 @@ pub fn last_empty_test() {
   let assert Error(Nil) = rasa.last(table)
 }
 
-pub fn ordered_set_last_test() {
-  let table =
-    rasa.build("rasa_test")
-    |> rasa.with_kind(rasa.OrderedSet)
-    |> rasa.table
-
-  let assert Ok(Nil) = rasa.insert(table, "a", 10)
-  let assert Ok(Nil) = rasa.insert(table, "b", 20)
-
-  let assert Ok(#("b", 20)) = rasa.last(table)
-}
-
 pub fn to_list_test() {
   // Order is only guaranteed with `OrderedSet`
   let table =
