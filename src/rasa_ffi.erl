@@ -16,7 +16,16 @@
   ets_delete/1,
   ets_delete/2,
   ets_info/2,
-  unique_int/0
+  unique_int/0,
+  atomics_new/0,
+  atomics_get/1,
+  atomics_put/2,
+  atomics_add/2,
+  atomics_add_get/2,
+  atomics_sub/2,
+  atomics_sub_get/2,
+  atomics_exchange/2,
+  atomics_compare_exchange/3
 ]).
 
 unique_int() -> erlang:unique_integer([positive]).
@@ -120,6 +129,38 @@ counters_get(Counter, Ix) ->
 
     {ok, Value}
   end).
+
+%%% Atomics %%%
+
+atomics_new() ->
+  atomics:new(1, [{signed, true}]).
+
+atomics_get(Ref) ->
+  atomics:get(Ref, 1).
+
+atomics_put(Ref, Value) ->
+  atomics:put(Ref, 1, Value), nil.
+
+atomics_add(Ref, Value) ->
+  atomics:add(Ref, 1, Value), nil.
+
+atomics_add_get(Ref, Value) ->
+  atomics:add_get(Ref, 1, Value).
+
+atomics_sub(Ref, Value) ->
+  atomics:sub(Ref, 1, Value), nil.
+
+atomics_sub_get(Ref, Value) ->
+  atomics:sub_get(Ref, 1, Value).
+
+atomics_exchange(Ref, Value) ->
+  atomics:exchange(Ref, 1, Value).
+
+atomics_compare_exchange(Ref, Expected, Desired) ->
+  case atomics:compare_exchange(Ref, 1, Expected, Desired) of
+    ok -> {ok, nil};
+    Actual -> {error, Actual}
+  end.
 
 %%% Helper functions %%%
 
