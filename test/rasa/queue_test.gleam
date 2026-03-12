@@ -1,6 +1,7 @@
 import gleam/erlang/process
 import rasa
 import rasa/counter
+import rasa/monotonic
 import rasa/queue
 
 pub fn push_test() {
@@ -11,7 +12,7 @@ pub fn push_test() {
 
 pub fn push_error_test() {
   // Counter where subsequent calls return the same value
-  let counter = counter.new(fn() { Ok(99) })
+  let counter = counter.new(fn() { 99 })
 
   let queue =
     queue.build("new_queue")
@@ -271,7 +272,7 @@ fn new_queue() {
 }
 
 fn new_monotonic_queue() {
-  let counter = counter.monotonic(counter.Nanosecond)
+  let counter = counter.monotonic(monotonic.Nanosecond)
 
   queue.build("new_monotonic_queue")
   |> queue.with_access(rasa.Private)

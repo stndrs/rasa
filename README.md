@@ -65,20 +65,21 @@ Atomic counters for generating sequential or time-based indices.
 
 ```gleam
 import rasa/counter
+import rasa/monotonic
 
 pub fn main() -> Nil {
   // Atomic counter that increments by 1 each call
   let c = counter.atomic()
-  let assert Ok(1) = counter.next(c)
-  let assert Ok(2) = counter.next(c)
+  let assert 1 = counter.next(c)
+  let assert 2 = counter.next(c)
 
   // Monotonic time counter with nanosecond precision
-  let m = counter.monotonic(counter.Nanosecond)
-  let assert Ok(_t) = counter.next(m)
+  let m = counter.monotonic(monotonic.Nanosecond)
+  let _t = counter.next(m)
 
   // Custom counter from any function
-  let always_99 = counter.new(fn() { Ok(99) })
-  let assert Ok(99) = counter.next(always_99)
+  let always_99 = counter.new(fn() { 99 })
+  let assert 99 = counter.next(always_99)
 }
 ```
 

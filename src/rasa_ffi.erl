@@ -1,9 +1,6 @@
 -module(rasa_ffi).
 
 -export([
-  counters_new/1,
-  counters_add/3,
-  counters_get/2,
   ets_new/2,
   ets_new/3,
   ets_new_named/3,
@@ -109,25 +106,6 @@ ets_info(Name, Item) ->
       undefined -> {error, nil};
       Value -> {ok, Value}
     end
-  end).
-
-%%% Counters %%%
-
-counters_new(Size) ->
-  counters:new(Size, [atomics]).
-
-counters_add(Counter, Ix, Incr) ->
-  with_rescue(fun() ->
-    counters:add(Counter, Ix, Incr),
-
-    {ok, nil}
-  end).
-
-counters_get(Counter, Ix) ->
-  with_rescue(fun() ->
-    Value = counters:get(Counter, Ix),
-
-    {ok, Value}
   end).
 
 %%% Atomics %%%

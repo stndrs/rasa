@@ -15,7 +15,7 @@ pub type TimeUnit {
   Native
 }
 
-/// Returns the next value from the `Counter`.
+/// Returns the current monotonic time in the given `TimeUnit`.
 pub fn time(unit: TimeUnit) -> Int {
   monotonic_time_(unit)
 }
