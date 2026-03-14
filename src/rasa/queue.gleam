@@ -66,8 +66,7 @@ pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
 /// Removes and returns the queue's first value. Returns `Error(Nil)` if the
 /// queue is empty.
 pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
-  use #(index, value) <- result.try(table.first(queue.store))
-  use _ <- result.map(table.delete(queue.store, index))
+  use #(_index, value) <- result.map(table.delete_first(queue.store))
 
   value
 }
