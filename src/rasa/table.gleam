@@ -86,6 +86,14 @@ pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
   ets_first_lookup_(table.ref)
 }
 
+/// Removes and returns the first key-value pair from the table. Returns
+/// `Error(Nil)` if the table is empty. The order is guaranteed only for
+/// `OrderedSet` tables.
+@internal
+pub fn delete_first(table: Table(a, b)) -> Result(#(a, b), Nil) {
+  ets_delete_first_(table.ref)
+}
+
 /// Returns the last key-value pair in the table without removing it from the
 /// table. The order is guaranteed only for `OrderedSet` tables. See the
 /// [ets docs][1] for more details.
@@ -159,6 +167,9 @@ fn ets_lookup_(table: Reference, key: a) -> Result(b, Nil)
 
 @external(erlang, "rasa_ffi", "ets_first_lookup")
 fn ets_first_lookup_(table: Reference) -> Result(#(a, b), Nil)
+
+@external(erlang, "rasa_ffi", "ets_delete_first")
+fn ets_delete_first_(table: Reference) -> Result(#(a, b), Nil)
 
 @external(erlang, "rasa_ffi", "ets_last_lookup")
 fn ets_last_lookup_(table: Reference) -> Result(#(a, b), Nil)

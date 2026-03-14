@@ -5,6 +5,7 @@
   ets_insert/3,
   ets_insert_new/3,
   ets_first_lookup/1,
+  ets_delete_first/1,
   ets_last_lookup/1,
   ets_lookup/2,
   ets_to_list/1,
@@ -52,6 +53,17 @@ ets_first_lookup(Name) ->
     case ets:first_lookup(Name) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
+    end
+  catch error:badarg -> {error, nil}
+  end.
+
+ets_delete_first(Name) ->
+  try
+    case ets:first_lookup(Name) of
+      '$end_of_table' -> {error, nil};
+      {Key, [{_Key, Value}]} ->
+        ets:delete(Name, Key),
+        {ok, {Key, Value}}
     end
   catch error:badarg -> {error, nil}
   end.

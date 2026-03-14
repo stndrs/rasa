@@ -63,6 +63,25 @@ pub fn first_empty_test() {
   let assert Error(Nil) = table.first(t)
 }
 
+pub fn delete_first_test() {
+  let t =
+    table.build()
+    |> table.with_kind(table.OrderedSet)
+    |> table.table
+
+  let assert Ok(Nil) = table.insert(t, "a", 10)
+  let assert Ok(Nil) = table.insert(t, "b", 20)
+
+  let assert Ok(#("a", 10)) = table.delete_first(t)
+  let assert Ok(#("b", 20)) = table.first(t)
+}
+
+pub fn delete_first_empty_test() {
+  let t = table.build() |> table.table
+
+  let assert Error(Nil) = table.delete_first(t)
+}
+
 pub fn last_test() {
   let t =
     table.build()
