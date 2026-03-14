@@ -55,7 +55,7 @@ pub opaque type Table(a, b) {
 }
 
 /// Creates a new ETS table from a `Builder`.
-pub fn table(builder: Builder) -> Table(a, b) {
+pub fn new(builder: Builder) -> Table(a, b) {
   ets_new_(builder.kind, builder.access) |> Table
 }
 
@@ -116,7 +116,8 @@ pub fn is_empty(table: Table(a, b)) -> Bool {
   |> result.unwrap(True)
 }
 
-/// Removes a key and its value from the table.
+/// Removes a key and its value from the table. Succeeds even if the key does
+/// not exist in the table.
 pub fn delete(table: Table(a, b), key: a) -> Result(Nil, Nil) {
   ets_delete_key_(table.ref, key)
 }

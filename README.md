@@ -18,20 +18,20 @@ gleam add rasa@1
 Key-value stores backed by ETS. Configure the table type (`Set` or `OrderedSet`) and access level (`Public`, `Protected`, or `Private`) using the builder pattern.
 
 ```gleam
-import rasa
+import rasa/table
 
 pub fn main() -> Nil {
-  let tabula = rasa.build("blank_slate")
-  |> rasa.with_kind(rasa.Set)
-  |> rasa.with_access(rasa.Private)
-  |> rasa.table
+  let tabula = table.build()
+  |> table.with_kind(table.Set)
+  |> table.with_access(table.Private)
+  |> table.new
 
-  let assert Ok(Nil) = rasa.insert(tabula, "nature", 30)
-  let assert Ok(Nil) = rasa.insert(tabula, "nurture", 70)
+  let assert Ok(Nil) = table.insert(tabula, "nature", 30)
+  let assert Ok(Nil) = table.insert(tabula, "nurture", 70)
 
   // insert_new only inserts if the key doesn't already exist
-  let assert Error(Nil) = rasa.insert_new(tabula, "nature", 0)
-  let assert Ok(30) = rasa.lookup(tabula, "nature")
+  let assert Error(Nil) = table.insert_new(tabula, "nature", 0)
+  let assert Ok(30) = table.lookup(tabula, "nature")
 }
 ```
 
@@ -40,14 +40,12 @@ pub fn main() -> Nil {
 FIFO queues backed by ordered ETS tables. Each queue requires a counter to generate indices.
 
 ```gleam
-import rasa
 import rasa/counter
 import rasa/queue
+import rasa/table
 
 pub fn main() -> Nil {
-  let q = queue.build("tasks")
-  |> queue.with_access(rasa.Private)
-  |> queue.new(counter.atomic())
+  let q = queue.new(counter.atomic(), table.Private)
 
   let assert Ok(1) = queue.push(q, "first")
   let assert Ok(2) = queue.push(q, "second")

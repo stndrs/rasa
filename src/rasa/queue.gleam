@@ -3,10 +3,10 @@
 //// a binary search tree so insert and lookups are performed in logarithmic
 //// time. These operations will take longer as the queue grows in size.
 ////
-//// `Queue`s require a `Counter` that provide ever-increasing integer values
-//// used as keys for the underlying `Table`. If using `counter.atomic`,
-//// each new integer value is 1 greater than the previous. Atomic counters are
-//// backed by [erlang counters][1] and are therefore guaranteed atomicity.
+//// `Queue`s require a `Counter` to generate integer keys for the underlying
+//// `Table`. If using `counter.atomic`, each new integer value is 1 greater
+//// than the previous. Atomic counters are backed by [erlang counters][1] and
+//// are therefore guaranteed atomicity.
 ////
 //// If using `counter.monotonic`, each new value comes from calling
 //// [monotonic_time][2] with the specified time unit. Since `monotonic_time`
@@ -22,33 +22,19 @@ import gleam/result
 import rasa/counter.{type Counter}
 import rasa/table.{type Table}
 
-pub opaque type Builder {
-  Builder(access: table.Access)
-}
-
-/// Creates a new `Builder`. Defaults to `Protected` access.
-pub fn build() -> Builder {
-  Builder(access: table.Protected)
-}
-
-/// Sets the access level on the builder.
-pub fn with_access(_builder: Builder, access: table.Access) -> Builder {
-  Builder(access:)
-}
-
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
 /// `Counter`.
 pub opaque type Queue(a) {
   Queue(store: Table(Int, a), counter: Counter)
 }
 
-/// Creates a new Queue from a `Builder`. This function will update the builder
-/// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
-pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
+/// Creates a new `Queue` with the given `Counter` and `Access` level. The
+/// underlying table is always an `OrderedSet`.
+pub fn new(counter: Counter, access: table.Access) -> Queue(a) {
   table.build()
-  |> table.with_access(builder.access)
+  |> table.with_access(access)
   |> table.with_kind(table.OrderedSet)
-  |> table.table
+  |> table.new
   |> Queue(counter)
 }
 
