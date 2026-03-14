@@ -23,17 +23,17 @@ import rasa/counter.{type Counter}
 import rasa/table.{type Table}
 
 pub opaque type Builder {
-  Builder(name: String, access: table.Access)
+  Builder(access: table.Access)
 }
 
-/// Creates a new `Builder` with the given name. Defaults to `Protected` access.
-pub fn build(name: String) -> Builder {
-  Builder(name:, access: table.Protected)
+/// Creates a new `Builder`. Defaults to `Protected` access.
+pub fn build() -> Builder {
+  Builder(access: table.Protected)
 }
 
 /// Sets the access level on the builder.
-pub fn with_access(builder: Builder, access: table.Access) -> Builder {
-  Builder(..builder, access:)
+pub fn with_access(_builder: Builder, access: table.Access) -> Builder {
+  Builder(access:)
 }
 
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
@@ -46,7 +46,6 @@ pub opaque type Queue(a) {
 /// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
 pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
   table.build()
-  |> table.with_name(builder.name)
   |> table.with_access(builder.access)
   |> table.with_kind(table.OrderedSet)
   |> table.table

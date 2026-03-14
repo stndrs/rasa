@@ -2,8 +2,6 @@
 
 -export([
   ets_new/2,
-  ets_new/3,
-  ets_new_named/3,
   ets_insert/3,
   ets_insert_new/3,
   ets_first_lookup/1,
@@ -13,7 +11,6 @@
   ets_delete/1,
   ets_delete/2,
   ets_info/2,
-  unique_int/0,
   monotonic_unique_int/0,
   atomics_new/0,
   atomics_get/1,
@@ -26,8 +23,6 @@
   atomics_compare_exchange/3
 ]).
 
-unique_int() -> erlang:unique_integer([positive]).
-
 monotonic_unique_int() -> erlang:unique_integer([monotonic]).
 
 %%% ETS %%%
@@ -35,13 +30,6 @@ monotonic_unique_int() -> erlang:unique_integer([monotonic]).
 ets_new(Kind, Access) ->
   Opts = [Kind, Access],
   ets:new(rasa_table, Opts).
-
-ets_new_named(Name, Kind, Access) ->
-  Opts = [named_table, Kind, Access],
-  ets:new(Name, Opts).
-
-ets_new(Name, Kind, Access) ->
-  ets_new_named(Name, Kind, Access).
 
 ets_insert(Name, Key, Value) ->
   with_rescue(fun() ->
