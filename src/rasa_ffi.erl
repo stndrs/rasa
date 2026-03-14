@@ -32,72 +32,76 @@ ets_new(Kind, Access) ->
   ets:new(rasa_table, Opts).
 
 ets_insert(Name, Key, Value) ->
-  with_rescue(fun() ->
+  try
     ets:insert(Name, {Key, Value}),
-
     {ok, nil}
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_insert_new(Name, Key, Value) ->
-  with_rescue(fun() ->
+  try
     case ets:insert_new(Name, {Key, Value}) of
       true -> {ok, nil};
       false -> {error, nil}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_first_lookup(Name) ->
-  with_rescue(fun() ->
+  try
     case ets:first_lookup(Name) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_last_lookup(Name) ->
-  with_rescue(fun() ->
+  try
     case ets:last_lookup(Name) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_lookup(Name, Key) ->
-  with_rescue(fun() ->
+  try
     case ets:lookup(Name, Key) of
       [{_Key, Value}] -> {ok, Value};
       [] -> {error, nil}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_to_list(Name) ->
-  with_rescue(fun() ->
-    List = ets:tab2list(Name),
-
-    {ok, List}
-  end).
+  try
+    {ok, ets:tab2list(Name)}
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_delete(Name) ->
-  with_rescue(fun() ->
+  try
     ets:delete(Name),
-
     {ok, nil}
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_delete(Name, Key) ->
-  with_rescue(fun() ->
+  try
     ets:delete(Name, Key),
-
     {ok, nil}
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_info(Name, Item) ->
-  with_rescue(fun() ->
+  try
     case ets:info(Name, Item) of
       undefined -> {error, nil};
       Value -> {ok, Value}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 %%% Atomics %%%
 
@@ -131,9 +135,3 @@ atomics_compare_exchange(Ref, Expected, Desired) ->
     Actual -> {error, Actual}
   end.
 
-%%% Helper functions %%%
-
-with_rescue(Fun) ->
-  try Fun()
-  catch error:badarg -> {error, nil}
-  end.
