@@ -61,9 +61,11 @@ ets_delete_first(Name) ->
   try
     case ets:first_lookup(Name) of
       '$end_of_table' -> {error, nil};
-      {Key, [{_Key, Value}]} ->
-        ets:delete(Name, Key),
-        {ok, {Key, Value}}
+      {Key, [{_Key, _Value}]} ->
+        case ets:take(Name, Key) of
+          [{_Key2, Value2}] -> {ok, {Key, Value2}};
+          [] -> ets_delete_first(Name)
+        end
     end
   catch error:badarg -> {error, nil}
   end.
@@ -146,4 +148,3 @@ atomics_compare_exchange(Ref, Expected, Desired) ->
     ok -> {ok, nil};
     Actual -> {error, Actual}
   end.
-
