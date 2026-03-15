@@ -1,9 +1,6 @@
 -module(rasa_ffi).
 
 -export([
-  counters_new/1,
-  counters_add/3,
-  counters_get/2,
   ets_new/2,
   ets_new/3,
   ets_new_named/3,
@@ -16,7 +13,16 @@
   ets_delete/1,
   ets_delete/2,
   ets_info/2,
-  unique_int/0
+  unique_int/0,
+  atomics_new/0,
+  atomics_get/1,
+  atomics_put/2,
+  atomics_add/2,
+  atomics_add_get/2,
+  atomics_sub/2,
+  atomics_sub_get/2,
+  atomics_exchange/2,
+  atomics_compare_exchange/3
 ]).
 
 unique_int() -> erlang:unique_integer([positive]).
@@ -102,24 +108,37 @@ ets_info(Name, Item) ->
     end
   end).
 
-%%% Counters %%%
+%%% Atomics %%%
 
-counters_new(Size) ->
-  counters:new(Size, [atomics]).
+atomics_new() ->
+  atomics:new(1, [{signed, true}]).
 
-counters_add(Counter, Ix, Incr) ->
-  with_rescue(fun() ->
-    counters:add(Counter, Ix, Incr),
+atomics_get(Ref) ->
+  atomics:get(Ref, 1).
 
-    {ok, nil}
-  end).
+atomics_put(Ref, Value) ->
+  atomics:put(Ref, 1, Value), nil.
 
-counters_get(Counter, Ix) ->
-  with_rescue(fun() ->
-    Value = counters:get(Counter, Ix),
+atomics_add(Ref, Value) ->
+  atomics:add(Ref, 1, Value), nil.
 
-    {ok, Value}
-  end).
+atomics_add_get(Ref, Value) ->
+  atomics:add_get(Ref, 1, Value).
+
+atomics_sub(Ref, Value) ->
+  atomics:sub(Ref, 1, Value), nil.
+
+atomics_sub_get(Ref, Value) ->
+  atomics:sub_get(Ref, 1, Value).
+
+atomics_exchange(Ref, Value) ->
+  atomics:exchange(Ref, 1, Value).
+
+atomics_compare_exchange(Ref, Expected, Desired) ->
+  case atomics:compare_exchange(Ref, 1, Expected, Desired) of
+    ok -> {ok, nil};
+    Actual -> {error, Actual}
+  end.
 
 %%% Helper functions %%%
 

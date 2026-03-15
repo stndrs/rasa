@@ -57,7 +57,7 @@ pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
 /// `next` call, `push` can return an error if a previously used index key
 /// is reused.
 pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
-  use index <- result.try(counter.next(queue.counter))
+  let index = counter.next(queue.counter)
   use _ <- result.map(rasa.insert_new(queue.store, index, value))
 
   index
