@@ -3,38 +3,32 @@
 //// a binary search tree so insert and lookups are performed in logarithmic
 //// time. These operations will take longer as the queue grows in size.
 ////
-//// `Queue`s require a `Counter` that provide ever-increasing integer values
-//// used as keys for the underlying `Table`. If using `counter.atomic`,
-//// each new integer value is 1 greater than the previous. Atomic counters are
-//// backed by [erlang counters][1] and are therefore guaranteed atomicity.
+//// `Queue`s require a `Counter` to generate integer keys for the underlying
+//// `Table`. You can use the `counter` module to define custom counters, or
+//// use one of the counters defined in that module.
 ////
-//// If using `counter.monotonic`, each new value comes from calling
-//// [monotonic_time][2] with the specified time unit. Since `monotonic_time`
+//// If using `counter.atomic`, each new integer value is 1 greater
+//// than the previous. Atomic counters are backed by [erlang counters][1] and
+//// are therefore guaranteed atomicity.
+////
+//// If using `counter.monotonic`, each new value is a strictly monotonically
+//// increasing unique integer backed by erlang's [unique_integer/1][2].
+//// Consecutive calls to `queue.push` are guaranteed to produce unique indices.
+////
+//// If using `counter.monotonic_time`, each new value comes from calling
+//// [monotonic_time][3] with the specified time unit. Since `monotonic_time`
 //// can produce the same result from consecutive calls, it is possible for
 //// calls to `queue.push` to return an error if that index key was previously
 //// inserted into the queue.
 ////
 //// [1]: https://www.erlang.org/doc/apps/erts/counters.html
-//// [2]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+//// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+//// [3]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
 
 import gleam/list
 import gleam/result
 import rasa/counter.{type Counter}
 import rasa/table.{type Table}
-
-pub opaque type Builder {
-  Builder(access: table.Access)
-}
-
-/// Creates a new `Builder`. Defaults to `Protected` access.
-pub fn build() -> Builder {
-  Builder(access: table.Protected)
-}
-
-/// Sets the access level on the builder.
-pub fn with_access(_builder: Builder, access: table.Access) -> Builder {
-  Builder(access:)
-}
 
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
 /// `Counter`.
@@ -42,13 +36,13 @@ pub opaque type Queue(a) {
   Queue(store: Table(Int, a), counter: Counter)
 }
 
-/// Creates a new Queue from a `Builder`. This function will update the builder
-/// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
-pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
+/// Creates a new `Queue` with the given `Counter` and `Access` level. The
+/// underlying table is always an `OrderedSet`.
+pub fn new(counter: Counter, access: table.Access) -> Queue(a) {
   table.build()
-  |> table.with_access(builder.access)
+  |> table.with_access(access)
   |> table.with_kind(table.OrderedSet)
-  |> table.table
+  |> table.new
   |> Queue(counter)
 }
 
@@ -66,8 +60,7 @@ pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
 /// Removes and returns the queue's first value. Returns `Error(Nil)` if the
 /// queue is empty.
 pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
-  use #(index, value) <- result.try(table.first(queue.store))
-  use _ <- result.map(table.delete(queue.store, index))
+  use #(_index, value) <- result.map(table.delete_first(queue.store))
 
   value
 }
@@ -77,7 +70,8 @@ pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
   table.lookup(queue.store, index)
 }
 
-/// Removes the item at the given index from the queue.
+/// Removes the item at the given index from the queue. Succeeds even if the
+/// index does not exist in the queue.
 pub fn delete(queue: Queue(a), index: Int) -> Result(Nil, Nil) {
   table.delete(queue.store, index)
 }

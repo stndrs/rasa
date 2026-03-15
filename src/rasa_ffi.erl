@@ -5,6 +5,7 @@
   ets_insert/3,
   ets_insert_new/3,
   ets_first_lookup/1,
+  ets_delete_first/1,
   ets_last_lookup/1,
   ets_lookup/2,
   ets_to_list/1,
@@ -31,72 +32,85 @@ ets_new(Kind, Access) ->
   Opts = [Kind, Access],
   ets:new(rasa_table, Opts).
 
-ets_insert(Name, Key, Value) ->
+ets_insert(TableRef, Key, Value) ->
   try
-    ets:insert(Name, {Key, Value}),
+    ets:insert(TableRef, {Key, Value}),
     {ok, nil}
   catch error:badarg -> {error, nil}
   end.
 
-ets_insert_new(Name, Key, Value) ->
+ets_insert_new(TableRef, Key, Value) ->
   try
-    case ets:insert_new(Name, {Key, Value}) of
+    case ets:insert_new(TableRef, {Key, Value}) of
       true -> {ok, nil};
       false -> {error, nil}
     end
   catch error:badarg -> {error, nil}
   end.
 
-ets_first_lookup(Name) ->
+ets_first_lookup(TableRef) ->
   try
-    case ets:first_lookup(Name) of
+    case ets:first_lookup(TableRef) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
     end
   catch error:badarg -> {error, nil}
   end.
 
-ets_last_lookup(Name) ->
+ets_delete_first(TableRef) ->
   try
-    case ets:last_lookup(Name) of
+    case ets:first_lookup(TableRef) of
+      '$end_of_table' -> {error, nil};
+      {Key, [{_Key, _Value}]} ->
+        case ets:take(TableRef, Key) of
+          [{_Key2, Value2}] -> {ok, {Key, Value2}};
+          [] -> ets_delete_first(TableRef)
+        end
+    end
+  catch error:badarg -> {error, nil}
+  end.
+
+ets_last_lookup(TableRef) ->
+  try
+    case ets:last_lookup(TableRef) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
     end
   catch error:badarg -> {error, nil}
   end.
 
-ets_lookup(Name, Key) ->
+ets_lookup(TableRef, Key) ->
   try
-    case ets:lookup(Name, Key) of
+    case ets:lookup(TableRef, Key) of
       [{_Key, Value}] -> {ok, Value};
       [] -> {error, nil}
     end
   catch error:badarg -> {error, nil}
   end.
 
-ets_to_list(Name) ->
+ets_to_list(TableRef) ->
   try
-    {ok, ets:tab2list(Name)}
+    {ok, ets:tab2list(TableRef)}
   catch error:badarg -> {error, nil}
   end.
 
-ets_delete(Name) ->
+ets_delete(TableRef) ->
   try
-    ets:delete(Name),
+    ets:delete(TableRef),
     {ok, nil}
   catch error:badarg -> {error, nil}
   end.
 
-ets_delete(Name, Key) ->
+ets_delete(TableRef, Key) ->
   try
-    ets:delete(Name, Key),
+    ets:delete(TableRef, Key),
     {ok, nil}
   catch error:badarg -> {error, nil}
   end.
 
-ets_info(Name, Item) ->
+ets_info(TableRef, Item) ->
   try
-    case ets:info(Name, Item) of
+    case ets:info(TableRef, Item) of
       undefined -> {error, nil};
       Value -> {ok, Value}
     end
@@ -134,4 +148,3 @@ atomics_compare_exchange(Ref, Expected, Desired) ->
     ok -> {ok, nil};
     Actual -> {error, Actual}
   end.
-

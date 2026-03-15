@@ -1,26 +1,26 @@
 import rasa/table
 
 pub fn insert_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(Nil) = table.insert(t, "key", 10)
 }
 
 pub fn insert_new_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(Nil) = table.insert_new(t, "key", 10)
 }
 
 pub fn insert_new_error_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(Nil) = table.insert_new(t, "key", 10)
   let assert Error(Nil) = table.insert_new(t, "key", 20)
 }
 
 pub fn lookup_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(_) = table.insert(t, "key", 10)
 
@@ -28,7 +28,7 @@ pub fn lookup_test() {
 }
 
 pub fn delete_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(_) = table.insert(t, "key", 10)
   let assert Ok(10) = table.lookup(t, "key")
@@ -37,7 +37,7 @@ pub fn delete_test() {
 }
 
 pub fn drop_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(_) = table.insert(t, "key", 10)
   let assert Ok(10) = table.lookup(t, "key")
@@ -49,7 +49,7 @@ pub fn first_test() {
   let t =
     table.build()
     |> table.with_kind(table.OrderedSet)
-    |> table.table
+    |> table.new
 
   let assert Ok(Nil) = table.insert(t, "a", 10)
   let assert Ok(Nil) = table.insert(t, "b", 20)
@@ -58,16 +58,35 @@ pub fn first_test() {
 }
 
 pub fn first_empty_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Error(Nil) = table.first(t)
+}
+
+pub fn delete_first_test() {
+  let t =
+    table.build()
+    |> table.with_kind(table.OrderedSet)
+    |> table.new
+
+  let assert Ok(Nil) = table.insert(t, "a", 10)
+  let assert Ok(Nil) = table.insert(t, "b", 20)
+
+  let assert Ok(#("a", 10)) = table.delete_first(t)
+  let assert Ok(#("b", 20)) = table.first(t)
+}
+
+pub fn delete_first_empty_test() {
+  let t = table.build() |> table.new
+
+  let assert Error(Nil) = table.delete_first(t)
 }
 
 pub fn last_test() {
   let t =
     table.build()
     |> table.with_kind(table.OrderedSet)
-    |> table.table
+    |> table.new
 
   let assert Ok(Nil) = table.insert(t, "a", 10)
   let assert Ok(Nil) = table.insert(t, "b", 20)
@@ -76,7 +95,7 @@ pub fn last_test() {
 }
 
 pub fn last_empty_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Error(Nil) = table.last(t)
 }
@@ -85,7 +104,7 @@ pub fn to_list_test() {
   let t =
     table.build()
     |> table.with_kind(table.OrderedSet)
-    |> table.table
+    |> table.new
 
   let assert Ok([]) = table.to_list(t)
 
@@ -99,7 +118,7 @@ pub fn to_list_test() {
 }
 
 pub fn is_empty_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert True = table.is_empty(t)
 
@@ -113,7 +132,7 @@ pub fn is_empty_test() {
 }
 
 pub fn dropped_table_is_empty_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert True = table.is_empty(t)
 
@@ -123,7 +142,7 @@ pub fn dropped_table_is_empty_test() {
 }
 
 pub fn size_test() {
-  let t = table.build() |> table.table
+  let t = table.build() |> table.new
 
   let assert Ok(0) = table.size(t)
 
@@ -140,7 +159,7 @@ pub fn private_test() {
   let t =
     table.build()
     |> table.with_access(table.Private)
-    |> table.table
+    |> table.new
 
   let assert Ok(table.Private) = table.access(t)
 }
@@ -149,7 +168,7 @@ pub fn protected_test() {
   let t =
     table.build()
     |> table.with_access(table.Protected)
-    |> table.table
+    |> table.new
 
   let assert Ok(table.Protected) = table.access(t)
 }
@@ -158,7 +177,7 @@ pub fn public_test() {
   let t =
     table.build()
     |> table.with_access(table.Public)
-    |> table.table
+    |> table.new
 
   let assert Ok(table.Public) = table.access(t)
 }
@@ -167,7 +186,7 @@ pub fn set_test() {
   let t =
     table.build()
     |> table.with_kind(table.Set)
-    |> table.table
+    |> table.new
 
   let assert Ok(table.Set) = table.kind(t)
 }
@@ -176,7 +195,7 @@ pub fn ordered_set_test() {
   let t =
     table.build()
     |> table.with_kind(table.OrderedSet)
-    |> table.table
+    |> table.new
 
   let assert Ok(table.OrderedSet) = table.kind(t)
 }

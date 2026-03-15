@@ -55,7 +55,7 @@ pub opaque type Table(a, b) {
 }
 
 /// Creates a new ETS table from a `Builder`.
-pub fn table(builder: Builder) -> Table(a, b) {
+pub fn new(builder: Builder) -> Table(a, b) {
   ets_new_(builder.kind, builder.access) |> Table
 }
 
@@ -86,6 +86,14 @@ pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
   ets_first_lookup_(table.ref)
 }
 
+/// Removes and returns the first key-value pair from the table. Returns
+/// `Error(Nil)` if the table is empty. The order is guaranteed only for
+/// `OrderedSet` tables.
+@internal
+pub fn delete_first(table: Table(a, b)) -> Result(#(a, b), Nil) {
+  ets_delete_first_(table.ref)
+}
+
 /// Returns the last key-value pair in the table without removing it from the
 /// table. The order is guaranteed only for `OrderedSet` tables. See the
 /// [ets docs][1] for more details.
@@ -95,7 +103,8 @@ pub fn last(table: Table(a, b)) -> Result(#(a, b), Nil) {
   ets_last_lookup_(table.ref)
 }
 
-/// Returns all entries in the table as a list of key-value tuples.
+/// Returns all entries in the table as a list of key-value tuples. The order
+/// is guaranteed only for `OrderedSet` tables.
 pub fn to_list(table: Table(a, b)) -> Result(List(#(a, b)), Nil) {
   ets_to_list_(table.ref)
 }
@@ -108,7 +117,8 @@ pub fn is_empty(table: Table(a, b)) -> Bool {
   |> result.unwrap(True)
 }
 
-/// Removes a key and its value from the table.
+/// Removes a key and its value from the table. Succeeds even if the key does
+/// not exist in the table.
 pub fn delete(table: Table(a, b), key: a) -> Result(Nil, Nil) {
   ets_delete_key_(table.ref, key)
 }
@@ -159,6 +169,9 @@ fn ets_lookup_(table: Reference, key: a) -> Result(b, Nil)
 
 @external(erlang, "rasa_ffi", "ets_first_lookup")
 fn ets_first_lookup_(table: Reference) -> Result(#(a, b), Nil)
+
+@external(erlang, "rasa_ffi", "ets_delete_first")
+fn ets_delete_first_(table: Reference) -> Result(#(a, b), Nil)
 
 @external(erlang, "rasa_ffi", "ets_last_lookup")
 fn ets_last_lookup_(table: Reference) -> Result(#(a, b), Nil)

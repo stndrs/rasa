@@ -22,10 +22,12 @@ pub fn time(unit: TimeUnit) -> Int {
 
 /// Returns a unique integer that is monotonically ordered. Consecutive calls
 /// are guaranteed to produce strictly increasing values, unlike `time` which
-/// may return the same value from consecutive calls. Backed by Erlang's
-/// [unique_integer(\[monotonic\])][1].
+/// may return the same value from consecutive calls. Backed by erlang's
+/// [unique_integer/1][1]. These are [strictly monotonically increasing][2]
+/// integers which are expensive to generate.
 ///
 /// [1]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+/// [2]: https://www.erlang.org/docs/24/apps/erts/time_correction#Strictly_Monotonically_Increasing
 pub fn unique() -> Int {
   monotonic_unique_int_()
 }
