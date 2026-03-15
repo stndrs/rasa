@@ -62,7 +62,8 @@ pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
   table.lookup(queue.store, index)
 }
 
-/// Removes the item at the given index from the queue.
+/// Removes the item at the given index from the queue. Succeeds even if the
+/// index does not exist in the queue.
 pub fn delete(queue: Queue(a), index: Int) -> Result(Nil, Nil) {
   table.delete(queue.store, index)
 }

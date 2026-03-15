@@ -103,7 +103,8 @@ pub fn last(table: Table(a, b)) -> Result(#(a, b), Nil) {
   ets_last_lookup_(table.ref)
 }
 
-/// Returns all entries in the table as a list of key-value tuples.
+/// Returns all entries in the table as a list of key-value tuples. The order
+/// is guaranteed only for `OrderedSet` tables.
 pub fn to_list(table: Table(a, b)) -> Result(List(#(a, b)), Nil) {
   ets_to_list_(table.ref)
 }
