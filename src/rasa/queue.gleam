@@ -8,7 +8,7 @@
 //// use one of the counters defined in that module.
 ////
 //// If using `counter.atomic`, each new integer value is 1 greater
-//// than the previous. Atomic counters are backed by [erlang counters][1] and
+//// than the previous. Atomic counters are backed by [erlang atomics][1] and
 //// are therefore guaranteed atomicity.
 ////
 //// If using `counter.monotonic`, each new value is a strictly monotonically
@@ -21,7 +21,7 @@
 //// calls to `queue.push` to return an error if that index key was previously
 //// inserted into the queue.
 ////
-//// [1]: https://www.erlang.org/doc/apps/erts/counters.html
+//// [1]: https://www.erlang.org/doc/apps/erts/atomics.html
 //// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
 //// [3]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
 
@@ -33,7 +33,7 @@ import rasa/table.{type Table}
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
 /// `Counter`.
 pub opaque type Queue(a) {
-  Queue(store: Table(Int, a), counter: Counter)
+  Queue(table: Table(Int, a), counter: Counter)
 }
 
 /// Creates a new `Queue` with the given `Counter` and `Access` level. The
@@ -52,7 +52,7 @@ pub fn new(counter: Counter, access: table.Access) -> Queue(a) {
 /// is reused.
 pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
   let index = counter.next(queue.counter)
-  use _ <- result.map(table.insert_new(queue.store, index, value))
+  use _ <- result.map(table.insert_new(queue.table, index, value))
 
   index
 }
@@ -60,40 +60,40 @@ pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
 /// Removes and returns the queue's first value. Returns `Error(Nil)` if the
 /// queue is empty.
 pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
-  use #(_index, value) <- result.map(table.delete_first(queue.store))
+  use #(_index, value) <- result.map(table.delete_first(queue.table))
 
   value
 }
 
-/// Returns the value stored in the queue at a given index.
+/// Returns the value tabled in the queue at a given index.
 pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
-  table.lookup(queue.store, index)
+  table.lookup(queue.table, index)
 }
 
 /// Removes the item at the given index from the queue. Succeeds even if the
 /// index does not exist in the queue.
 pub fn delete(queue: Queue(a), index: Int) -> Result(Nil, Nil) {
-  table.delete(queue.store, index)
+  table.delete(queue.table, index)
 }
 
 /// Deletes the queue.
 pub fn drop(queue: Queue(a)) -> Result(Nil, Nil) {
-  table.drop(queue.store)
+  table.drop(queue.table)
 }
 
 /// Returns the first item in the queue without removing it from the queue.
 pub fn first(queue: Queue(a)) -> Result(#(Int, a), Nil) {
-  table.first(queue.store)
+  table.first(queue.table)
 }
 
 /// Returns the last item in the queue without removing it from the queue.
 pub fn last(queue: Queue(a)) -> Result(#(Int, a), Nil) {
-  table.last(queue.store)
+  table.last(queue.table)
 }
 
 /// Returns the queue's values as a list in insertion order.
 pub fn to_list(queue: Queue(a)) -> Result(List(a), Nil) {
-  use key_vals <- result.map(table.to_list(queue.store))
+  use key_vals <- result.map(table.to_list(queue.table))
   use #(_key, value) <- list.map(key_vals)
 
   value
@@ -102,12 +102,10 @@ pub fn to_list(queue: Queue(a)) -> Result(List(a), Nil) {
 /// Determines whether the queue is empty. Returns `True` if the underlying
 /// table does not exist.
 pub fn is_empty(queue: Queue(a)) -> Bool {
-  first(queue)
-  |> result.replace(False)
-  |> result.unwrap(True)
+  table.is_empty(queue.table)
 }
 
 /// Returns the number of items in the queue.
 pub fn size(queue: Queue(a)) -> Result(Int, Nil) {
-  table.size(queue.store)
+  table.size(queue.table)
 }
