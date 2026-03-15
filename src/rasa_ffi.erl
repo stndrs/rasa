@@ -2,8 +2,6 @@
 
 -export([
   ets_new/2,
-  ets_new/3,
-  ets_new_named/3,
   ets_insert/3,
   ets_insert_new/3,
   ets_first_lookup/1,
@@ -13,7 +11,6 @@
   ets_delete/1,
   ets_delete/2,
   ets_info/2,
-  unique_int/0,
   monotonic_unique_int/0,
   atomics_new/0,
   atomics_get/1,
@@ -26,8 +23,6 @@
   atomics_compare_exchange/3
 ]).
 
-unique_int() -> erlang:unique_integer([positive]).
-
 monotonic_unique_int() -> erlang:unique_integer([monotonic]).
 
 %%% ETS %%%
@@ -36,80 +31,77 @@ ets_new(Kind, Access) ->
   Opts = [Kind, Access],
   ets:new(rasa_table, Opts).
 
-ets_new_named(Name, Kind, Access) ->
-  Opts = [named_table, Kind, Access],
-  ets:new(Name, Opts).
-
-ets_new(Name, Kind, Access) ->
-  ets_new_named(Name, Kind, Access).
-
 ets_insert(Name, Key, Value) ->
-  with_rescue(fun() ->
+  try
     ets:insert(Name, {Key, Value}),
-
     {ok, nil}
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_insert_new(Name, Key, Value) ->
-  with_rescue(fun() ->
+  try
     case ets:insert_new(Name, {Key, Value}) of
       true -> {ok, nil};
       false -> {error, nil}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_first_lookup(Name) ->
-  with_rescue(fun() ->
+  try
     case ets:first_lookup(Name) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_last_lookup(Name) ->
-  with_rescue(fun() ->
+  try
     case ets:last_lookup(Name) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, Value}]} -> {ok, {Key, Value}}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_lookup(Name, Key) ->
-  with_rescue(fun() ->
+  try
     case ets:lookup(Name, Key) of
       [{_Key, Value}] -> {ok, Value};
       [] -> {error, nil}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_to_list(Name) ->
-  with_rescue(fun() ->
-    List = ets:tab2list(Name),
-
-    {ok, List}
-  end).
+  try
+    {ok, ets:tab2list(Name)}
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_delete(Name) ->
-  with_rescue(fun() ->
+  try
     ets:delete(Name),
-
     {ok, nil}
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_delete(Name, Key) ->
-  with_rescue(fun() ->
+  try
     ets:delete(Name, Key),
-
     {ok, nil}
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 ets_info(Name, Item) ->
-  with_rescue(fun() ->
+  try
     case ets:info(Name, Item) of
       undefined -> {error, nil};
       Value -> {ok, Value}
     end
-  end).
+  catch error:badarg -> {error, nil}
+  end.
 
 %%% Atomics %%%
 
@@ -143,9 +135,3 @@ atomics_compare_exchange(Ref, Expected, Desired) ->
     Actual -> {error, Actual}
   end.
 
-%%% Helper functions %%%
-
-with_rescue(Fun) ->
-  try Fun()
-  catch error:badarg -> {error, nil}
-  end.

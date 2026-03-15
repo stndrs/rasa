@@ -7,19 +7,15 @@
 ////
 //// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html
 
-import gleam/erlang/atom.{type Atom}
 import gleam/erlang/reference.{type Reference}
-import gleam/int
-import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/string
 
 /// A `Table` builder. Defaults to `Set` and `Protected`, matching the
 /// defaults specified by the [erlang ets module][1].
 ///
 /// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html#new/2
 pub opaque type Builder {
-  Builder(name: Option(String), kind: Kind, access: Access)
+  Builder(kind: Kind, access: Access)
 }
 
 /// The type of ETS table. `Set` tables have unordered keys. `OrderedSet`
@@ -38,14 +34,9 @@ pub type Access {
   Private
 }
 
-/// Creates a new `Builder` with the given name. Defaults to `Set` and
-/// `Protected`.
+/// Creates a new `Builder`. Defaults to `Set` and `Protected`.
 pub fn build() -> Builder {
-  Builder(name: None, kind: Set, access: Protected)
-}
-
-pub fn with_name(builder: Builder, name: String) -> Builder {
-  Builder(..builder, name: Some(name))
+  Builder(kind: Set, access: Protected)
 }
 
 /// Sets the table type on the builder.
@@ -61,50 +52,29 @@ pub fn with_access(builder: Builder, access: Access) -> Builder {
 /// An ETS table for storing key/value pairs
 pub opaque type Table(a, b) {
   Table(ref: Reference)
-  NamedTable(name: Atom)
 }
 
-/// Creates a new ETS table from a `Builder`. The table name is suffixed with
-/// a unique integer to avoid name collisions. The table name is converted to
-/// an atom which is used as the table identifier.
+/// Creates a new ETS table from a `Builder`.
 pub fn table(builder: Builder) -> Table(a, b) {
-  case builder.name {
-    Some(name) -> {
-      name
-      |> string.append(int.to_string(unique_int_()))
-      |> atom.create
-      |> ets_new_named_(builder.kind, builder.access)
-      |> NamedTable
-    }
-    None -> ets_new_(builder.kind, builder.access) |> Table
-  }
+  ets_new_(builder.kind, builder.access) |> Table
 }
 
 /// Inserts a key and value into the table. If the key already exists, its
 /// value is replaced with the new one.
 pub fn insert(table: Table(a, b), key: a, value: b) -> Result(Nil, Nil) {
-  case table {
-    Table(ref:) -> ets_insert_(ref, key, value)
-    NamedTable(name:) -> ets_insert_(name, key, value)
-  }
+  ets_insert_(table.ref, key, value)
 }
 
 /// Inserts a key and value into the table only if the key does not already
 /// exist. Returns `Error(Nil)` if the key is already present.
 pub fn insert_new(table: Table(a, b), key: a, value: b) -> Result(Nil, Nil) {
-  case table {
-    Table(ref:) -> ets_insert_new_(ref, key, value)
-    NamedTable(name:) -> ets_insert_new_(name, key, value)
-  }
+  ets_insert_new_(table.ref, key, value)
 }
 
 /// Returns the value associated with the given key, or `Error(Nil)` if
 /// the key does not exist.
 pub fn lookup(table: Table(a, b), key: a) -> Result(b, Nil) {
-  case table {
-    Table(ref:) -> ets_lookup_(ref, key)
-    NamedTable(name:) -> ets_lookup_(name, key)
-  }
+  ets_lookup_(table.ref, key)
 }
 
 /// Returns the first key-value pair in the table without removing it from the
@@ -113,10 +83,7 @@ pub fn lookup(table: Table(a, b), key: a) -> Result(b, Nil) {
 ///
 /// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html#first/1
 pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
-  case table {
-    Table(ref:) -> ets_first_lookup_(ref)
-    NamedTable(name:) -> ets_first_lookup_(name)
-  }
+  ets_first_lookup_(table.ref)
 }
 
 /// Returns the last key-value pair in the table without removing it from the
@@ -125,18 +92,12 @@ pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
 ///
 /// [1]: https://www.erlang.org/doc/apps/stdlib/ets.html#last/1
 pub fn last(table: Table(a, b)) -> Result(#(a, b), Nil) {
-  case table {
-    Table(ref:) -> ets_last_lookup_(ref)
-    NamedTable(name:) -> ets_last_lookup_(name)
-  }
+  ets_last_lookup_(table.ref)
 }
 
 /// Returns all entries in the table as a list of key-value tuples.
 pub fn to_list(table: Table(a, b)) -> Result(List(#(a, b)), Nil) {
-  case table {
-    Table(ref:) -> ets_to_list_(ref)
-    NamedTable(name:) -> ets_to_list_(name)
-  }
+  ets_to_list_(table.ref)
 }
 
 /// Determines whether or not the table is empty. Returns `True` if the table
@@ -149,42 +110,27 @@ pub fn is_empty(table: Table(a, b)) -> Bool {
 
 /// Removes a key and its value from the table.
 pub fn delete(table: Table(a, b), key: a) -> Result(Nil, Nil) {
-  case table {
-    Table(ref:) -> ets_delete_key_(ref, key)
-    NamedTable(name:) -> ets_delete_key_(name, key)
-  }
+  ets_delete_key_(table.ref, key)
 }
 
 /// Deletes the table.
 pub fn drop(table: Table(a, b)) -> Result(Nil, Nil) {
-  case table {
-    Table(ref:) -> ets_delete_(ref)
-    NamedTable(name:) -> ets_delete_(name)
-  }
+  ets_delete_(table.ref)
 }
 
 /// Returns the size of the table.
 pub fn size(table: Table(a, b)) -> Result(Int, Nil) {
-  case table {
-    Table(ref:) -> ets_info_(ref, Size)
-    NamedTable(name:) -> ets_info_(name, Size)
-  }
+  ets_info_(table.ref, Size)
 }
 
 /// Returns the table's `Kind` (`Set` or `OrderedSet`).
 pub fn kind(table: Table(a, b)) -> Result(Kind, Nil) {
-  case table {
-    Table(ref:) -> ets_info_(ref, Type)
-    NamedTable(name:) -> ets_info_(name, Type)
-  }
+  ets_info_(table.ref, Type)
 }
 
 /// Returns the table's `Access` level (`Public`, `Protected`, or `Private`).
 pub fn access(table: Table(a, b)) -> Result(Access, Nil) {
-  case table {
-    Table(ref:) -> ets_info_(ref, Protection)
-    NamedTable(name:) -> ets_info_(name, Protection)
-  }
+  ets_info_(table.ref, Protection)
 }
 
 type InfoItem {
@@ -194,37 +140,31 @@ type InfoItem {
 }
 
 @external(erlang, "rasa_ffi", "ets_to_list")
-fn ets_to_list_(table: t) -> Result(List(#(a, b)), Nil)
+fn ets_to_list_(table: Reference) -> Result(List(#(a, b)), Nil)
 
 @external(erlang, "rasa_ffi", "ets_info")
-fn ets_info_(table: t, item: InfoItem) -> Result(a, Nil)
-
-@external(erlang, "rasa_ffi", "ets_new")
-fn ets_new_named_(name: Atom, kind: Kind, access: Access) -> Atom
+fn ets_info_(table: Reference, item: InfoItem) -> Result(a, Nil)
 
 @external(erlang, "rasa_ffi", "ets_new")
 fn ets_new_(kind: Kind, access: Access) -> Reference
 
 @external(erlang, "rasa_ffi", "ets_insert")
-fn ets_insert_(table: t, key: a, val: b) -> Result(Nil, Nil)
+fn ets_insert_(table: Reference, key: a, val: b) -> Result(Nil, Nil)
 
 @external(erlang, "rasa_ffi", "ets_insert_new")
-fn ets_insert_new_(table: t, key: a, val: b) -> Result(Nil, Nil)
+fn ets_insert_new_(table: Reference, key: a, val: b) -> Result(Nil, Nil)
 
 @external(erlang, "rasa_ffi", "ets_lookup")
-fn ets_lookup_(table: t, key: a) -> Result(b, Nil)
+fn ets_lookup_(table: Reference, key: a) -> Result(b, Nil)
 
 @external(erlang, "rasa_ffi", "ets_first_lookup")
-fn ets_first_lookup_(table: t) -> Result(#(a, b), Nil)
+fn ets_first_lookup_(table: Reference) -> Result(#(a, b), Nil)
 
 @external(erlang, "rasa_ffi", "ets_last_lookup")
-fn ets_last_lookup_(table: t) -> Result(#(a, b), Nil)
+fn ets_last_lookup_(table: Reference) -> Result(#(a, b), Nil)
 
 @external(erlang, "rasa_ffi", "ets_delete")
-fn ets_delete_(table: t) -> Result(Nil, Nil)
+fn ets_delete_(table: Reference) -> Result(Nil, Nil)
 
 @external(erlang, "rasa_ffi", "ets_delete")
-fn ets_delete_key_(table: t, key: a) -> Result(Nil, Nil)
-
-@external(erlang, "rasa_ffi", "unique_int")
-fn unique_int_() -> Int
+fn ets_delete_key_(table: Reference, key: a) -> Result(Nil, Nil)

@@ -15,7 +15,7 @@ pub fn push_error_test() {
   let counter = counter.new(fn() { 99 })
 
   let queue =
-    queue.build("new_queue")
+    queue.build()
     |> queue.with_access(table.Private)
     |> queue.new(counter)
 
@@ -266,7 +266,7 @@ pub fn monotonic_at_test() {
 fn new_queue() {
   let counter = counter.atomic()
 
-  queue.build("new_queue")
+  queue.build()
   |> queue.with_access(table.Private)
   |> queue.new(counter)
 }
@@ -274,7 +274,7 @@ fn new_queue() {
 fn new_monotonic_queue() {
   let counter = counter.monotonic(monotonic.Nanosecond)
 
-  queue.build("new_monotonic_queue")
+  queue.build()
   |> queue.with_access(table.Private)
   |> queue.new(counter)
 }
