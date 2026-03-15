@@ -120,7 +120,7 @@ pub fn at_test() {
 }
 
 pub fn monotonic_push_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Ok(t1) = queue.push(queue, 10)
 
@@ -132,20 +132,20 @@ pub fn monotonic_push_test() {
 }
 
 pub fn monotonic_pop_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Ok(_t1) = queue.push(queue, 10)
   let assert Ok(10) = queue.pop(queue)
 }
 
 pub fn monotonic_pop_error_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Error(Nil) = queue.pop(queue)
 }
 
 pub fn monotonic_first_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Ok(_t1) = queue.push(queue, 10)
   let assert Ok(_t2) = queue.push(queue, 20)
@@ -154,13 +154,13 @@ pub fn monotonic_first_test() {
 }
 
 pub fn monotonic_first_empty_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Error(Nil) = queue.first(queue)
 }
 
 pub fn monotonic_last_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Ok(_t1) = queue.push(queue, 10)
   let assert Ok(_t2) = queue.push(queue, 20)
@@ -169,13 +169,13 @@ pub fn monotonic_last_test() {
 }
 
 pub fn monotonic_last_empty_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Error(Nil) = queue.last(queue)
 }
 
 pub fn monotonic_to_list_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Ok([]) = queue.to_list(queue)
 
@@ -189,7 +189,7 @@ pub fn monotonic_to_list_test() {
 }
 
 pub fn monotonic_is_empty_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert True = queue.is_empty(queue)
 
@@ -203,7 +203,7 @@ pub fn monotonic_is_empty_test() {
 }
 
 pub fn monotonic_size_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Ok(0) = queue.size(queue)
 
@@ -249,7 +249,7 @@ pub fn drop_error_test() {
 }
 
 pub fn monotonic_at_test() {
-  let queue = new_monotonic_queue()
+  let queue = new_monotonic_time_queue()
 
   let assert Error(Nil) = queue.at(queue, 1)
 
@@ -266,8 +266,8 @@ fn new_queue() {
   queue.new(counter, table.Private)
 }
 
-fn new_monotonic_queue() {
-  let counter = counter.monotonic(monotonic.Nanosecond)
+fn new_monotonic_time_queue() {
+  let counter = counter.monotonic_time(monotonic.Nanosecond)
 
   queue.new(counter, table.Private)
 }

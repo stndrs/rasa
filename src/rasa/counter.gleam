@@ -1,8 +1,8 @@
 //// Counters for generating sequential integer values. Counters are used by
 //// `rasa/queue` to index entries but can also be used on their own. Use
-//// `atomic` for a simple incrementing counter, `monotonic` for
-//// nanosecond-precision monotonic time values, or `new` to supply a custom
-//// function.
+//// `atomic` for a simple incrementing counter, `monotonic` for guaranteed
+//// unique monotonic values, `monotonic_time` for time-based monotonic values,
+//// or `new` to supply a custom function.
 
 import rasa/atomic
 import rasa/monotonic
@@ -32,8 +32,19 @@ pub fn atomic() -> Counter {
 /// to `next` _may_ return the same result.
 ///
 /// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
-pub fn monotonic(unit: monotonic.TimeUnit) -> Counter {
+pub fn monotonic_time(unit: monotonic.TimeUnit) -> Counter {
   Counter(handle_next: fn() { monotonic.time(unit) })
+}
+
+/// Returns a `Counter` backed by [strictly monotonically increasing][1] unique
+/// integers. Unlike `monotonic_time`, consecutive calls to `next` are
+/// **guaranteed** to produce strictly increasing values. Backed by erlang's
+/// [unique_integer/1][2], these are more expensive to call than `monotonic_time`.
+///
+/// [1]: https://www.erlang.org/docs/24/apps/erts/time_correction#Strictly_Monotonically_Increasing
+/// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+pub fn monotonic() -> Counter {
+  Counter(handle_next: fn() { monotonic.unique() })
 }
 
 /// Returns the next value from the `Counter`.

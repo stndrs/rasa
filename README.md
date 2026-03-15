@@ -72,8 +72,12 @@ pub fn main() -> Nil {
   let assert 2 = counter.next(c)
 
   // Monotonic time counter with nanosecond precision
-  let m = counter.monotonic(monotonic.Nanosecond)
+  let m = counter.monotonic_time(monotonic.Nanosecond)
   let _t = counter.next(m)
+
+  // Monotonic counter with guaranteed unique values
+  let u = counter.monotonic()
+  let _v = counter.next(u)
 
   // Custom counter from any function
   let always_99 = counter.new(fn() { 99 })

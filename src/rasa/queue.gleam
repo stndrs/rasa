@@ -4,18 +4,26 @@
 //// time. These operations will take longer as the queue grows in size.
 ////
 //// `Queue`s require a `Counter` to generate integer keys for the underlying
-//// `Table`. If using `counter.atomic`, each new integer value is 1 greater
+//// `Table`. You can use the `counter` module to define custom counters, or
+//// use one of the counters defined in that module.
+////
+//// If using `counter.atomic`, each new integer value is 1 greater
 //// than the previous. Atomic counters are backed by [erlang counters][1] and
 //// are therefore guaranteed atomicity.
 ////
-//// If using `counter.monotonic`, each new value comes from calling
-//// [monotonic_time][2] with the specified time unit. Since `monotonic_time`
+//// If using `counter.monotonic`, each new value is a strictly monotonically
+//// increasing unique integer backed by erlang's [unique_integer/1][2].
+//// Consecutive calls to `queue.push` are guaranteed to produce unique indices.
+////
+//// If using `counter.monotonic_time`, each new value comes from calling
+//// [monotonic_time][3] with the specified time unit. Since `monotonic_time`
 //// can produce the same result from consecutive calls, it is possible for
 //// calls to `queue.push` to return an error if that index key was previously
 //// inserted into the queue.
 ////
 //// [1]: https://www.erlang.org/doc/apps/erts/counters.html
-//// [2]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+//// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+//// [3]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
 
 import gleam/list
 import gleam/result
