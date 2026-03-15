@@ -1,10 +1,10 @@
-//// This module provides a `Queue` built using a `rasa.Table`. Queues created
+//// This module provides a `Queue` built using a `Table`. Queues created
 //// by this module are built using `ordered_set` ETS tables. Ordered sets use
 //// a binary search tree so insert and lookups are performed in logarithmic
 //// time. These operations will take longer as the queue grows in size.
 ////
 //// `Queue`s require a `Counter` that provide ever-increasing integer values
-//// used as keys for the underlying `rasa.Table`. If using `counter.atomic`,
+//// used as keys for the underlying `Table`. If using `counter.atomic`,
 //// each new integer value is 1 greater than the previous. Atomic counters are
 //// backed by [erlang counters][1] and are therefore guaranteed atomicity.
 ////
@@ -19,36 +19,37 @@
 
 import gleam/list
 import gleam/result
-import rasa
 import rasa/counter.{type Counter}
+import rasa/table.{type Table}
 
 pub opaque type Builder {
-  Builder(name: String, access: rasa.Access)
+  Builder(name: String, access: table.Access)
 }
 
 /// Creates a new `Builder` with the given name. Defaults to `Protected` access.
 pub fn build(name: String) -> Builder {
-  Builder(name:, access: rasa.Protected)
+  Builder(name:, access: table.Protected)
 }
 
 /// Sets the access level on the builder.
-pub fn with_access(builder: Builder, access: rasa.Access) -> Builder {
+pub fn with_access(builder: Builder, access: table.Access) -> Builder {
   Builder(..builder, access:)
 }
 
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
 /// `Counter`.
 pub opaque type Queue(a) {
-  Queue(store: rasa.Table(Int, a), counter: Counter)
+  Queue(store: Table(Int, a), counter: Counter)
 }
 
 /// Creates a new Queue from a `Builder`. This function will update the builder
 /// to specify an `OrderedSet` as Queues must be backed by `OrderedSet`s.
 pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
-  rasa.build(builder.name)
-  |> rasa.with_access(builder.access)
-  |> rasa.with_kind(rasa.OrderedSet)
-  |> rasa.table
+  table.build()
+  |> table.with_name(builder.name)
+  |> table.with_access(builder.access)
+  |> table.with_kind(table.OrderedSet)
+  |> table.table
   |> Queue(counter)
 }
 
@@ -58,7 +59,7 @@ pub fn new(builder: Builder, counter: Counter) -> Queue(a) {
 /// is reused.
 pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
   let index = counter.next(queue.counter)
-  use _ <- result.map(rasa.insert_new(queue.store, index, value))
+  use _ <- result.map(table.insert_new(queue.store, index, value))
 
   index
 }
@@ -66,40 +67,40 @@ pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
 /// Removes and returns the queue's first value. Returns `Error(Nil)` if the
 /// queue is empty.
 pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
-  use #(index, value) <- result.try(rasa.first(queue.store))
-  use _ <- result.map(rasa.delete(queue.store, index))
+  use #(index, value) <- result.try(table.first(queue.store))
+  use _ <- result.map(table.delete(queue.store, index))
 
   value
 }
 
 /// Returns the value stored in the queue at a given index.
 pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
-  rasa.lookup(queue.store, index)
+  table.lookup(queue.store, index)
 }
 
 /// Removes the item at the given index from the queue.
 pub fn delete(queue: Queue(a), index: Int) -> Result(Nil, Nil) {
-  rasa.delete(queue.store, index)
+  table.delete(queue.store, index)
 }
 
 /// Deletes the queue.
 pub fn drop(queue: Queue(a)) -> Result(Nil, Nil) {
-  rasa.drop(queue.store)
+  table.drop(queue.store)
 }
 
 /// Returns the first item in the queue without removing it from the queue.
 pub fn first(queue: Queue(a)) -> Result(#(Int, a), Nil) {
-  rasa.first(queue.store)
+  table.first(queue.store)
 }
 
 /// Returns the last item in the queue without removing it from the queue.
 pub fn last(queue: Queue(a)) -> Result(#(Int, a), Nil) {
-  rasa.last(queue.store)
+  table.last(queue.store)
 }
 
 /// Returns the queue's values as a list in insertion order.
 pub fn to_list(queue: Queue(a)) -> Result(List(a), Nil) {
-  use key_vals <- result.map(rasa.to_list(queue.store))
+  use key_vals <- result.map(table.to_list(queue.store))
   use #(_key, value) <- list.map(key_vals)
 
   value
@@ -115,5 +116,5 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
 
 /// Returns the number of items in the queue.
 pub fn size(queue: Queue(a)) -> Result(Int, Nil) {
-  rasa.size(queue.store)
+  table.size(queue.store)
 }
