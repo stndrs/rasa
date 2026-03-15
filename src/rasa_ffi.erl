@@ -4,7 +4,9 @@
   counters_new/1,
   counters_add/3,
   counters_get/2,
+  ets_new/2,
   ets_new/3,
+  ets_new_named/3,
   ets_insert/3,
   ets_insert_new/3,
   ets_first_lookup/1,
@@ -21,9 +23,16 @@ unique_int() -> erlang:unique_integer([positive]).
 
 %%% ETS %%%
 
-ets_new(Name, Kind, Access) ->
+ets_new(Kind, Access) ->
+  Opts = [Kind, Access],
+  ets:new(rasa_table, Opts).
+
+ets_new_named(Name, Kind, Access) ->
   Opts = [named_table, Kind, Access],
   ets:new(Name, Opts).
+
+ets_new(Name, Kind, Access) ->
+  ets_new_named(Name, Kind, Access).
 
 ets_insert(Name, Key, Value) ->
   with_rescue(fun() ->
