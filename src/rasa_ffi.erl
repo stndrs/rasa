@@ -14,6 +14,7 @@
   ets_delete/2,
   ets_info/2,
   unique_int/0,
+  monotonic_unique_int/0,
   atomics_new/0,
   atomics_get/1,
   atomics_put/2,
@@ -26,6 +27,8 @@
 ]).
 
 unique_int() -> erlang:unique_integer([positive]).
+
+monotonic_unique_int() -> erlang:unique_integer([monotonic]).
 
 %%% ETS %%%
 
