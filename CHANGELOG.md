@@ -7,7 +7,8 @@
 - The `rasa` module has been removed. All table functions have moved to
   `rasa/table`.
 - Tables are now unnamed and identified by reference instead of by name.
-  `table.build()` no longer takes a `String` argument.
+- `table.new` now returns a `table.Builder` and `table.build` returns a table
+- `queue.new` now returns a `queue.Builder` and `queue.build` returns a queue
 - The `rasa/counter` module has been redesigned:
   - `counter.next` now returns `Int` instead of `Result(Int, Nil)`.
   - `counter.new` accepts `fn() -> Int` instead of `fn() -> Result(Int, Nil)`.

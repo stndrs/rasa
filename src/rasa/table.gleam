@@ -34,8 +34,8 @@ pub type Access {
   Private
 }
 
-/// Creates a new `Builder`. Defaults to `Set` and `Protected`.
-pub fn build() -> Builder {
+/// Returns a `Builder`. Defaults to `Set` and `Protected`.
+pub fn new() -> Builder {
   Builder(kind: Set, access: Protected)
 }
 
@@ -54,8 +54,8 @@ pub opaque type Table(a, b) {
   Table(ref: Reference)
 }
 
-/// Creates a new ETS table from a `Builder`.
-pub fn new(builder: Builder) -> Table(a, b) {
+/// Returns a new ETS table configured according to the provided `Builder`.
+pub fn build(builder: Builder) -> Table(a, b) {
   ets_new_(builder.kind, builder.access) |> Table
 }
 

@@ -40,25 +40,29 @@ pub opaque type Queue(a) {
   Queue(table: Table(Int, a), counter: Counter)
 }
 
-pub fn build() -> Builder {
-  Builder(access: table.Private, counter: counter.atomic())
+/// Returns a new `Builder`, defaulting to `Protected` access and an
+/// atomic integer counter.
+pub fn new() -> Builder {
+  Builder(access: table.Protected, counter: counter.atomic())
 }
 
+/// Sets the access level on the `Builder`
 pub fn with_access(builder: Builder, access: table.Access) -> Builder {
   Builder(..builder, access:)
 }
 
+/// Sets the counter on the `Builder`.
 pub fn with_counter(builder: Builder, counter: Counter) -> Builder {
   Builder(..builder, counter:)
 }
 
-/// Creates a new `Queue` with the given `Counter` and `Access` level. The
+/// Returns a new `Queue` configured according to the provided `Builder`. The
 /// underlying table is always an `OrderedSet`.
-pub fn new(builder: Builder) -> Queue(a) {
-  table.build()
+pub fn build(builder: Builder) -> Queue(a) {
+  table.new()
   |> table.with_access(builder.access)
   |> table.with_kind(table.OrderedSet)
-  |> table.new
+  |> table.build
   |> Queue(builder.counter)
 }
 
