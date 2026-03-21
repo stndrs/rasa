@@ -23,10 +23,10 @@ Key-value stores backed by ETS. Configure the table type (`Set` or `OrderedSet`)
 import rasa/table
 
 pub fn main() -> Nil {
-  let tabula = table.build()
+  let tabula = table.new()
   |> table.with_kind(table.Set)
   |> table.with_access(table.Private)
-  |> table.new
+  |> table.build
 
   let assert Ok(Nil) = table.insert(tabula, "nature", 30)
   let assert Ok(Nil) = table.insert(tabula, "nurture", 70)
@@ -47,7 +47,10 @@ import rasa/queue
 import rasa/table
 
 pub fn main() -> Nil {
-  let q = queue.new(counter.atomic(), table.Private)
+  let q = queue.new()
+  |> queue.with_counter(counter.atomic())
+  |> queue.with_access(table.Private)
+  |> queue.build
 
   let assert Ok(1) = queue.push(q, "first")
   let assert Ok(2) = queue.push(q, "second")

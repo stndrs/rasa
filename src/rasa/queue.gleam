@@ -30,6 +30,8 @@ import gleam/result
 import rasa/counter.{type Counter}
 import rasa/table.{type Table}
 
+/// A `Queue` builder. Defaults to `Protected` access and an atomic integer
+/// counter.
 pub opaque type Builder {
   Builder(access: table.Access, counter: Counter)
 }
@@ -46,7 +48,7 @@ pub fn new() -> Builder {
   Builder(access: table.Protected, counter: counter.atomic())
 }
 
-/// Sets the access level on the `Builder`
+/// Sets the access level on the `Builder`.
 pub fn with_access(builder: Builder, access: table.Access) -> Builder {
   Builder(..builder, access:)
 }
