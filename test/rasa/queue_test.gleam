@@ -274,6 +274,44 @@ pub fn monotonic_at_test() {
   let assert Error(Nil) = queue.at(queue, 2)
 }
 
+pub fn unique_monotonic_push_test() {
+  let queue = new_monotonic_queue()
+
+  let assert Ok(t1) = queue.push(queue, "first")
+  let assert Ok(t2) = queue.push(queue, "second")
+  let assert Ok(t3) = queue.push(queue, "third")
+
+  assert t1 < t2
+  assert t2 < t3
+}
+
+pub fn unique_monotonic_pop_fifo_order_test() {
+  let queue = new_monotonic_queue()
+
+  let assert Ok(_) = queue.push(queue, "first")
+  let assert Ok(_) = queue.push(queue, "second")
+  let assert Ok(_) = queue.push(queue, "third")
+
+  let assert Ok("first") = queue.pop(queue)
+  let assert Ok("second") = queue.pop(queue)
+  let assert Ok("third") = queue.pop(queue)
+  let assert Error(Nil) = queue.pop(queue)
+}
+
+pub fn unique_monotonic_size_test() {
+  let queue = new_monotonic_queue()
+
+  let assert Ok(0) = queue.size(queue)
+
+  let assert Ok(_) = queue.push(queue, 10)
+
+  let assert Ok(1) = queue.size(queue)
+
+  let assert Ok(_) = queue.push(queue, 20)
+
+  let assert Ok(2) = queue.size(queue)
+}
+
 fn new_queue() {
   queue.new()
   |> queue.with_access(table.Private)
@@ -287,5 +325,12 @@ fn new_monotonic_time_queue() {
   queue.new()
   |> queue.with_access(table.Private)
   |> queue.with_counter(counter)
+  |> queue.build
+}
+
+fn new_monotonic_queue() {
+  queue.new()
+  |> queue.with_access(table.Private)
+  |> queue.with_counter(counter.monotonic())
   |> queue.build
 }
