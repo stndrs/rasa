@@ -73,8 +73,8 @@ import rasa/monotonic
 pub fn main() -> Nil {
   // Atomic counter that increments by 1 each call
   let c = counter.atomic()
-  let assert 1 = counter.next(c)
-  let assert 2 = counter.next(c)
+  assert 1 == counter.next(c)
+  assert 2 == counter.next(c)
 
   // Monotonic time counter with nanosecond precision
   let m = counter.monotonic_time(monotonic.Nanosecond)
@@ -86,7 +86,7 @@ pub fn main() -> Nil {
 
   // Custom counter from any function
   let always_99 = counter.new(fn() { 99 })
-  let assert 99 = counter.next(always_99)
+  assert 99 == counter.next(always_99)
 }
 ```
 
