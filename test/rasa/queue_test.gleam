@@ -12,9 +12,10 @@ pub fn push_test() {
 
 pub fn push_error_test() {
   // Counter where subsequent calls return the same value
-  let counter = counter.new(fn() { 99 })
-
-  let queue = queue.new(counter, table.Private)
+  let queue =
+    queue.build()
+    |> queue.with_counter(counter.new(fn() { 99 }))
+    |> queue.new
 
   let assert Ok(99) = queue.push(queue, 10)
   // Subsequent calls to `queue.push` fail due to attempting to
@@ -274,13 +275,17 @@ pub fn monotonic_at_test() {
 }
 
 fn new_queue() {
-  let counter = counter.atomic()
-
-  queue.new(counter, table.Private)
+  queue.build()
+  |> queue.with_access(table.Private)
+  |> queue.with_counter(counter.atomic())
+  |> queue.new
 }
 
 fn new_monotonic_time_queue() {
   let counter = counter.monotonic_time(monotonic.Nanosecond)
 
-  queue.new(counter, table.Private)
+  queue.build()
+  |> queue.with_access(table.Private)
+  |> queue.with_counter(counter)
+  |> queue.new
 }

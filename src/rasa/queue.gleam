@@ -30,20 +30,36 @@ import gleam/result
 import rasa/counter.{type Counter}
 import rasa/table.{type Table}
 
+pub opaque type Builder {
+  Builder(access: table.Access, counter: Counter)
+}
+
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
 /// `Counter`.
 pub opaque type Queue(a) {
   Queue(table: Table(Int, a), counter: Counter)
 }
 
+pub fn build() -> Builder {
+  Builder(access: table.Private, counter: counter.atomic())
+}
+
+pub fn with_access(builder: Builder, access: table.Access) -> Builder {
+  Builder(..builder, access:)
+}
+
+pub fn with_counter(builder: Builder, counter: Counter) -> Builder {
+  Builder(..builder, counter:)
+}
+
 /// Creates a new `Queue` with the given `Counter` and `Access` level. The
 /// underlying table is always an `OrderedSet`.
-pub fn new(counter: Counter, access: table.Access) -> Queue(a) {
+pub fn new(builder: Builder) -> Queue(a) {
   table.build()
-  |> table.with_access(access)
+  |> table.with_access(builder.access)
   |> table.with_kind(table.OrderedSet)
   |> table.new
-  |> Queue(counter)
+  |> Queue(builder.counter)
 }
 
 /// Inserts a value into the queue. Returns the index assigned to the value.

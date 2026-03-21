@@ -15,8 +15,6 @@
     `TimeUnit` type has moved to the new `rasa/monotonic` module.
   - Counters are now backed by `rasa/atomic` (hardware atomics) instead of
     erlang `counters`.
-- The `rasa/queue` module no longer has its own builder. `queue.new` takes a
-  `Counter` and `Access` directly.
 
 ### New modules
 
