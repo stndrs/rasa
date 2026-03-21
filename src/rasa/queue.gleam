@@ -59,13 +59,17 @@ pub fn push(queue: Queue(a), value: a) -> Result(Int, Nil) {
 
 /// Removes and returns the queue's first value. Returns `Error(Nil)` if the
 /// queue is empty.
+///
+/// For `Public` queues accessed from multiple processes, if another process
+/// removes the first entry between the lookup and the removal, the operation
+/// retries from the new first entry.
 pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
   use #(_index, value) <- result.map(table.delete_first(queue.table))
 
   value
 }
 
-/// Returns the value tabled in the queue at a given index.
+/// Returns the value stored in the queue at a given index.
 pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
   table.lookup(queue.table, index)
 }

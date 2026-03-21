@@ -199,3 +199,59 @@ pub fn ordered_set_test() {
 
   let assert Ok(table.OrderedSet) = table.kind(t)
 }
+
+pub fn insert_overwrite_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.insert(t, "key", 10)
+  let assert Ok(10) = table.lookup(t, "key")
+
+  let assert Ok(Nil) = table.insert(t, "key", 20)
+  let assert Ok(20) = table.lookup(t, "key")
+
+  let assert Ok(1) = table.size(t)
+}
+
+pub fn insert_after_drop_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.drop(t)
+  let assert Error(Nil) = table.insert(t, "key", 10)
+}
+
+pub fn lookup_after_drop_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.insert(t, "key", 10)
+  let assert Ok(Nil) = table.drop(t)
+  let assert Error(Nil) = table.lookup(t, "key")
+}
+
+pub fn size_after_drop_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.insert(t, "key", 10)
+  let assert Ok(Nil) = table.drop(t)
+  let assert Error(Nil) = table.size(t)
+}
+
+pub fn delete_after_drop_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.insert(t, "key", 10)
+  let assert Ok(Nil) = table.drop(t)
+  let assert Error(Nil) = table.delete(t, "key")
+}
+
+pub fn drop_after_drop_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.drop(t)
+  let assert Error(Nil) = table.drop(t)
+}
+
+pub fn delete_missing_key_test() {
+  let t = table.build() |> table.new
+
+  let assert Ok(Nil) = table.delete(t, "nonexistent")
+}

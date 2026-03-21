@@ -35,6 +35,19 @@ pub fn pop_error_test() {
   let assert Error(Nil) = queue.pop(queue)
 }
 
+pub fn pop_fifo_order_test() {
+  let queue = new_queue()
+
+  let assert Ok(1) = queue.push(queue, "first")
+  let assert Ok(2) = queue.push(queue, "second")
+  let assert Ok(3) = queue.push(queue, "third")
+
+  let assert Ok("first") = queue.pop(queue)
+  let assert Ok("second") = queue.pop(queue)
+  let assert Ok("third") = queue.pop(queue)
+  let assert Error(Nil) = queue.pop(queue)
+}
+
 pub fn first_test() {
   let queue = new_queue()
 

@@ -1,4 +1,11 @@
+//// Monotonic time and unique integer generation backed by Erlang's
+//// [monotonic_time/1][1] and [unique_integer/1][2].
+////
+//// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+//// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+
 /// The time unit used to convert the current erlang monotonic time.
+/// Passed directly to erlang's [monotonic_time/1][1].
 ///
 /// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
 pub type TimeUnit {
@@ -14,7 +21,9 @@ pub type TimeUnit {
   Native
 }
 
-/// Returns the current monotonic time in the given `TimeUnit`.
+/// Returns the current monotonic time in the given `TimeUnit`. Note that
+/// consecutive calls may return the same value, especially with coarser
+/// time units like `Second` or `Millisecond`.
 pub fn time(unit: TimeUnit) -> Int {
   monotonic_time_(unit)
 }

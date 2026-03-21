@@ -89,6 +89,10 @@ pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
 /// Removes and returns the first key-value pair from the table. Returns
 /// `Error(Nil)` if the table is empty. The order is guaranteed only for
 /// `OrderedSet` tables.
+///
+/// For `Public` tables accessed from multiple processes, if another process
+/// deletes the first entry between the lookup and the removal, the operation
+/// retries from the new first entry.
 @internal
 pub fn delete_first(table: Table(a, b)) -> Result(#(a, b), Nil) {
   ets_delete_first_(table.ref)
