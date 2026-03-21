@@ -1,5 +1,4 @@
-/// The time unit for a `monotonic` counter. This is passed directly to
-/// Erlang's [monotonic_time][1].
+/// The time unit used to convert the current erlang monotonic time.
 ///
 /// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
 pub type TimeUnit {

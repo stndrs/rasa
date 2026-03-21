@@ -1,6 +1,6 @@
 //// Atomic integers backed by Erlang's [atomics][1]. Each `Atomic` is a
-//// single signed 64-bit integer that supports lock-free atomic operations.
-//// All operations use hardware atomic instructions with no software locking.
+//// single signed 64-bit integer. Atomics use atomic hardware instructions
+//// without software locking.
 ////
 //// [1]: https://www.erlang.org/doc/apps/erts/atomics.html
 
