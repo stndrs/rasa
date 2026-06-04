@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.1
+
+- Updated `gleam_stdlib`
+
 ## v2.0.0
 
 ### Breaking changes
