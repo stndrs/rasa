@@ -58,13 +58,19 @@ ets_first_lookup(TableRef) ->
   end.
 
 ets_delete_first(TableRef) ->
+  case ets_delete_first_step(TableRef) of
+    retry -> ets_delete_first(TableRef);
+    Result -> Result
+  end.
+
+ets_delete_first_step(TableRef) ->
   try
     case ets:first_lookup(TableRef) of
       '$end_of_table' -> {error, nil};
       {Key, [{_Key, _Value}]} ->
         case ets:take(TableRef, Key) of
           [{_Key2, Value2}] -> {ok, {Key, Value2}};
-          [] -> ets_delete_first(TableRef)
+          [] -> retry
         end
     end
   catch error:badarg -> {error, nil}
