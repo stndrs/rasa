@@ -37,6 +37,12 @@ pub fn main() -> Nil {
 }
 ```
 
+> **Table lifetime.** ETS tables are owned by the process that calls
+> `table.build` (or `queue.build`) and are destroyed when that process exits.
+> Build shared tables from a long-lived process and pass the `Table` (or
+> `Queue`) value to whatever needs it; a table created in a short-lived task
+> vanishes when that task ends.
+
 ### Queues
 
 FIFO queues backed by ordered ETS tables. Each queue requires a counter to generate indices.
