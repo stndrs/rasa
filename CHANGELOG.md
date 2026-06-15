@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v3.0.0
 
 ### Breaking changes
 
@@ -10,9 +10,9 @@
 
 - **`ets_delete_first` stack growth**: Restructured the internal Erlang FFI retry loop to be a proper tail call. This prevents unbounded stack growth under heavy contention on `Public` tables when another process deletes the first entry between lookup and removal.
 
-## v2.0.1
+### Changed
 
-- Updated `gleam_stdlib`
+- Updated `gleam_stdlib` minimum version to 1.0.0
 
 ## v2.0.0
 
