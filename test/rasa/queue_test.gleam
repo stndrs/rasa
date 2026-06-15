@@ -14,7 +14,7 @@ pub fn push_error_test() {
   // Counter where subsequent calls return the same value
   let queue =
     queue.new()
-    |> queue.with_counter(counter.new(fn() { 99 }))
+    |> queue.with_counter(fn() { counter.new(fn() { 99 }) })
     |> queue.build
 
   let assert Ok(99) = queue.push(queue, 10)
@@ -315,12 +315,12 @@ pub fn unique_monotonic_size_test() {
 fn new_queue() {
   queue.new()
   |> queue.with_access(table.Private)
-  |> queue.with_counter(counter.atomic())
+  |> queue.with_counter(counter.atomic)
   |> queue.build
 }
 
 fn new_monotonic_time_queue() {
-  let counter = counter.monotonic_time(monotonic.Nanosecond)
+  let counter = fn() { counter.monotonic_time(monotonic.Nanosecond) }
 
   queue.new()
   |> queue.with_access(table.Private)
@@ -331,6 +331,6 @@ fn new_monotonic_time_queue() {
 fn new_monotonic_queue() {
   queue.new()
   |> queue.with_access(table.Private)
-  |> queue.with_counter(counter.monotonic())
+  |> queue.with_counter(counter.monotonic)
   |> queue.build
 }

@@ -2,6 +2,11 @@
 //// single signed 64-bit integer. Atomics use atomic hardware instructions
 //// without software locking.
 ////
+//// Arithmetic operations (`add`, `add_get`, `sub`, `sub_get`) wrap around
+//// silently on overflow, matching Erlang's `atomics` semantics: going past
+//// `2^63 - 1` continues from `-2^63`, and below `-2^63` continues from
+//// `2^63 - 1`. There is no error on overflow.
+////
 //// [1]: https://www.erlang.org/doc/apps/erts/atomics.html
 
 import gleam/erlang/reference.{type Reference}

@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- **`queue.with_counter` signature change**: The `counter` argument now expects a `fn() -> Counter` instead of a `Counter` value. This defers counter creation until `queue.build` is called.
+
+### Fixed
+
+- **`ets_delete_first` stack growth**: Restructured the internal Erlang FFI retry loop to be a proper tail call. This prevents unbounded stack growth under heavy contention on `Public` tables when another process deletes the first entry between lookup and removal.
+
 ## v2.0.1
 
 - Updated `gleam_stdlib`

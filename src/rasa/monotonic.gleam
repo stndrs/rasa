@@ -1,13 +1,13 @@
 //// Monotonic time and unique integer generation backed by Erlang's
 //// [monotonic_time/1][1] and [unique_integer/1][2].
 ////
-//// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
-//// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+//// [1]: https://www.erlang.org/doc/apps/erts/erlang.html#monotonic_time/1
+//// [2]: https://www.erlang.org/doc/apps/erts/erlang.html#unique_integer/1
 
 /// The time unit used to convert the current erlang monotonic time.
 /// Passed directly to erlang's [monotonic_time/1][1].
 ///
-/// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+/// [1]: https://www.erlang.org/doc/apps/erts/erlang.html#monotonic_time/1
 pub type TimeUnit {
   /// Monotonic time in seconds.
   Second
@@ -34,8 +34,8 @@ pub fn time(unit: TimeUnit) -> Int {
 /// [unique_integer/1][1]. These are [strictly monotonically increasing][2]
 /// integers which are expensive to generate.
 ///
-/// [1]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
-/// [2]: https://www.erlang.org/docs/24/apps/erts/time_correction#Strictly_Monotonically_Increasing
+/// [1]: https://www.erlang.org/doc/apps/erts/erlang.html#unique_integer/1
+/// [2]: https://www.erlang.org/doc/apps/erts/time_correction.html#strictly-monotonically-increasing
 pub fn unique() -> Int {
   monotonic_unique_int_()
 }

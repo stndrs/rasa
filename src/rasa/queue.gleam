@@ -22,8 +22,8 @@
 //// inserted into the queue.
 ////
 //// [1]: https://www.erlang.org/doc/apps/erts/atomics.html
-//// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
-//// [3]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+//// [2]: https://www.erlang.org/doc/apps/erts/erlang.html#unique_integer/1
+//// [3]: https://www.erlang.org/doc/apps/erts/erlang.html#monotonic_time/1
 
 import gleam/list
 import gleam/result
@@ -33,7 +33,7 @@ import rasa/table.{type Table}
 /// A `Queue` builder. Defaults to `Protected` access and an atomic integer
 /// counter.
 pub opaque type Builder {
-  Builder(access: table.Access, counter: Counter)
+  Builder(access: table.Access, counter: fn() -> Counter)
 }
 
 /// A FIFO queue backed by an ordered ETS table. Values are indexed by a
@@ -45,7 +45,7 @@ pub opaque type Queue(a) {
 /// Returns a new `Builder`, defaulting to `Protected` access and an
 /// atomic integer counter.
 pub fn new() -> Builder {
-  Builder(access: table.Protected, counter: counter.atomic())
+  Builder(access: table.Protected, counter: counter.atomic)
 }
 
 /// Sets the access level on the `Builder`.
@@ -54,7 +54,7 @@ pub fn with_access(builder: Builder, access: table.Access) -> Builder {
 }
 
 /// Sets the counter on the `Builder`.
-pub fn with_counter(builder: Builder, counter: Counter) -> Builder {
+pub fn with_counter(builder: Builder, counter: fn() -> Counter) -> Builder {
   Builder(..builder, counter:)
 }
 
@@ -65,7 +65,7 @@ pub fn build(builder: Builder) -> Queue(a) {
   |> table.with_access(builder.access)
   |> table.with_kind(table.OrderedSet)
   |> table.build
-  |> Queue(builder.counter)
+  |> Queue(builder.counter())
 }
 
 /// Inserts a value into the queue. Returns the index assigned to the value.

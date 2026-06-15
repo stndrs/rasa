@@ -31,7 +31,7 @@ pub fn atomic() -> Counter {
 /// will provide monotonically increasing time values, but consecutive calls
 /// to `next` _may_ return the same result.
 ///
-/// [1]: https://www.erlang.org/doc/apps/erts/erlang#monotonic_time/1
+/// [1]: https://www.erlang.org/doc/apps/erts/erlang.html#monotonic_time/1
 pub fn monotonic_time(unit: monotonic.TimeUnit) -> Counter {
   Counter(handle_next: fn() { monotonic.time(unit) })
 }
@@ -41,8 +41,8 @@ pub fn monotonic_time(unit: monotonic.TimeUnit) -> Counter {
 /// **guaranteed** to produce strictly increasing values. Backed by erlang's
 /// [unique_integer/1][2], these are more expensive to call than `monotonic_time`.
 ///
-/// [1]: https://www.erlang.org/docs/24/apps/erts/time_correction#Strictly_Monotonically_Increasing
-/// [2]: https://www.erlang.org/doc/apps/erts/erlang#unique_integer/1
+/// [1]: https://www.erlang.org/doc/apps/erts/time_correction.html#strictly-monotonically-increasing
+/// [2]: https://www.erlang.org/doc/apps/erts/erlang.html#unique_integer/1
 pub fn monotonic() -> Counter {
   Counter(handle_next: fn() { monotonic.unique() })
 }
