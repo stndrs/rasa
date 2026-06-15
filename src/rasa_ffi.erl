@@ -6,8 +6,10 @@
   ets_insert_new/3,
   ets_first_lookup/1,
   ets_delete_first/1,
+  ets_delete_last/1,
   ets_last_lookup/1,
   ets_lookup/2,
+  ets_member/2,
   ets_to_list/1,
   ets_delete/1,
   ets_delete/2,
@@ -76,6 +78,25 @@ ets_delete_first_step(TableRef) ->
   catch error:badarg -> {error, nil}
   end.
 
+ets_delete_last(TableRef) ->
+  case ets_delete_last_step(TableRef) of
+    retry -> ets_delete_last(TableRef);
+    Result -> Result
+  end.
+
+ets_delete_last_step(TableRef) ->
+  try
+    case ets:last_lookup(TableRef) of
+      '$end_of_table' -> {error, nil};
+      {Key, [{_Key, _Value}]} ->
+        case ets:take(TableRef, Key) of
+          [{_Key2, Value2}] -> {ok, {Key, Value2}};
+          [] -> retry
+        end
+    end
+  catch error:badarg -> {error, nil}
+  end.
+
 ets_last_lookup(TableRef) ->
   try
     case ets:last_lookup(TableRef) of
@@ -91,6 +112,12 @@ ets_lookup(TableRef, Key) ->
       [{_Key, Value}] -> {ok, Value};
       [] -> {error, nil}
     end
+  catch error:badarg -> {error, nil}
+  end.
+
+ets_member(TableRef, Key) ->
+  try
+    {ok, ets:member(TableRef, Key)}
   catch error:badarg -> {error, nil}
   end.
 
