@@ -10,7 +10,7 @@ Type-safe ETS tables, queues, and counters for Gleam.
 Requires OTP 27 or later.
 
 ```sh
-gleam add rasa@2
+gleam add rasa@3
 ```
 
 ## Usage
@@ -54,7 +54,7 @@ import rasa/table
 
 pub fn main() -> Nil {
   let q = queue.new()
-  |> queue.with_counter(counter.atomic())
+  |> queue.with_counter(counter.atomic)
   |> queue.with_access(table.Private)
   |> queue.build
 

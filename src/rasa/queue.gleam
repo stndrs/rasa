@@ -91,6 +91,18 @@ pub fn pop(queue: Queue(a)) -> Result(a, Nil) {
   value
 }
 
+/// Removes and returns the queue's last value. Returns `Error(Nil)` if the
+/// queue is empty.
+///
+/// For `Public` queues accessed from multiple processes, if another process
+/// removes the last entry between the lookup and the removal, the operation
+/// retries from the new last entry.
+pub fn pop_last(queue: Queue(a)) -> Result(a, Nil) {
+  use #(_index, value) <- result.map(table.delete_last(queue.table))
+
+  value
+}
+
 /// Returns the value stored in the queue at a given index.
 pub fn at(queue: Queue(a), index: Int) -> Result(a, Nil) {
   table.lookup(queue.table, index)

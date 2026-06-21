@@ -27,6 +27,25 @@ pub fn lookup_test() {
   let assert Ok(10) = table.lookup(t, "key")
 }
 
+pub fn member_test() {
+  let t = table.new() |> table.build
+
+  let assert Ok(False) = table.member(t, "key")
+
+  let assert Ok(Nil) = table.insert(t, "key", 10)
+
+  let assert Ok(True) = table.member(t, "key")
+}
+
+pub fn member_after_drop_test() {
+  let t = table.new() |> table.build
+
+  let assert Ok(Nil) = table.insert(t, "key", 10)
+  let assert Ok(Nil) = table.drop(t)
+
+  let assert Error(Nil) = table.member(t, "key")
+}
+
 pub fn delete_test() {
   let t = table.new() |> table.build
 
@@ -80,6 +99,25 @@ pub fn delete_first_empty_test() {
   let t = table.new() |> table.build
 
   let assert Error(Nil) = table.delete_first(t)
+}
+
+pub fn delete_last_test() {
+  let t =
+    table.new()
+    |> table.with_kind(table.OrderedSet)
+    |> table.build
+
+  let assert Ok(Nil) = table.insert(t, "a", 10)
+  let assert Ok(Nil) = table.insert(t, "b", 20)
+
+  let assert Ok(#("b", 20)) = table.delete_last(t)
+  let assert Ok(#("a", 10)) = table.last(t)
+}
+
+pub fn delete_last_empty_test() {
+  let t = table.new() |> table.build
+
+  let assert Error(Nil) = table.delete_last(t)
 }
 
 pub fn last_test() {

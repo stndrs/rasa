@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v3.0.0
 
 ### Breaking changes
 
@@ -10,9 +10,16 @@
 
 - **`ets_delete_first` stack growth**: Restructured the internal Erlang FFI retry loop to be a proper tail call. This prevents unbounded stack growth under heavy contention on `Public` tables when another process deletes the first entry between lookup and removal.
 
-## v2.0.1
+### Changed
 
-- Updated `gleam_stdlib`
+- Updated `gleam_stdlib` minimum version to 1.0.0
+
+### New features
+
+- **`table.delete_last` / `queue.pop_last`**: Remove and return the last entry of a table or queue. Combined with `delete_first`/`pop`, queues can now be used as double-ended queues. Like `delete_first`, the operation retries on `Public` tables if another process removes the last entry mid-operation.
+- **`table.delete_first` is now public**: Previously internal, it removes and returns the first entry of a table directly (the same operation `queue.pop` uses). Pairs with the new `table.delete_last`.
+- **`counter.from_atomic`**: Create a `Counter` from an existing `Atomic` and a `fn(Atomic) -> Int` describing how to produce each value. Enables custom step sizes and starting values, and lets you retain a reference to the underlying atomic.
+- **`table.member`**: Check whether a key exists without copying its value out of the table. Returns `Ok(True)`/`Ok(False)`, or `Error(Nil)` if the table no longer exists.
 
 ## v2.0.0
 

@@ -77,6 +77,12 @@ pub fn lookup(table: Table(a, b), key: a) -> Result(b, Nil) {
   ets_lookup_(table.ref, key)
 }
 
+/// Returns `Ok(True)` if the table contains the given key, `Ok(False)` if it
+/// does not, or `Error(Nil)` if the table does not exist.
+pub fn member(table: Table(a, b), key: a) -> Result(Bool, Nil) {
+  ets_member_(table.ref, key)
+}
+
 /// Returns the first key-value pair in the table without removing it from the
 /// table. The order is guaranteed only for `OrderedSet` tables. See the
 /// [ets docs][1] for more details.
@@ -93,9 +99,19 @@ pub fn first(table: Table(a, b)) -> Result(#(a, b), Nil) {
 /// For `Public` tables accessed from multiple processes, if another process
 /// deletes the first entry between the lookup and the removal, the operation
 /// retries from the new first entry.
-@internal
 pub fn delete_first(table: Table(a, b)) -> Result(#(a, b), Nil) {
   ets_delete_first_(table.ref)
+}
+
+/// Removes and returns the last key-value pair from the table. Returns
+/// `Error(Nil)` if the table is empty. The order is guaranteed only for
+/// `OrderedSet` tables.
+///
+/// For `Public` tables accessed from multiple processes, if another process
+/// deletes the last entry between the lookup and the removal, the operation
+/// retries from the new last entry.
+pub fn delete_last(table: Table(a, b)) -> Result(#(a, b), Nil) {
+  ets_delete_last_(table.ref)
 }
 
 /// Returns the last key-value pair in the table without removing it from the
@@ -171,11 +187,17 @@ fn ets_insert_new_(table: Reference, key: a, val: b) -> Result(Nil, Nil)
 @external(erlang, "rasa_ffi", "ets_lookup")
 fn ets_lookup_(table: Reference, key: a) -> Result(b, Nil)
 
+@external(erlang, "rasa_ffi", "ets_member")
+fn ets_member_(table: Reference, key: a) -> Result(Bool, Nil)
+
 @external(erlang, "rasa_ffi", "ets_first_lookup")
 fn ets_first_lookup_(table: Reference) -> Result(#(a, b), Nil)
 
 @external(erlang, "rasa_ffi", "ets_delete_first")
 fn ets_delete_first_(table: Reference) -> Result(#(a, b), Nil)
+
+@external(erlang, "rasa_ffi", "ets_delete_last")
+fn ets_delete_last_(table: Reference) -> Result(#(a, b), Nil)
 
 @external(erlang, "rasa_ffi", "ets_last_lookup")
 fn ets_last_lookup_(table: Reference) -> Result(#(a, b), Nil)

@@ -49,6 +49,38 @@ pub fn pop_fifo_order_test() {
   let assert Error(Nil) = queue.pop(queue)
 }
 
+pub fn pop_last_test() {
+  let queue = new_queue()
+
+  let assert Ok(1) = queue.push(queue, "first")
+  let assert Ok(2) = queue.push(queue, "second")
+  let assert Ok(3) = queue.push(queue, "third")
+
+  let assert Ok("third") = queue.pop_last(queue)
+  let assert Ok("second") = queue.pop_last(queue)
+  let assert Ok("first") = queue.pop_last(queue)
+  let assert Error(Nil) = queue.pop_last(queue)
+}
+
+pub fn pop_last_empty_test() {
+  let queue = new_queue()
+
+  let assert Error(Nil) = queue.pop_last(queue)
+}
+
+pub fn deque_mixed_test() {
+  let queue = new_queue()
+
+  let assert Ok(1) = queue.push(queue, "a")
+  let assert Ok(2) = queue.push(queue, "b")
+  let assert Ok(3) = queue.push(queue, "c")
+
+  let assert Ok("a") = queue.pop(queue)
+  let assert Ok("c") = queue.pop_last(queue)
+  let assert Ok("b") = queue.pop(queue)
+  let assert Error(Nil) = queue.pop(queue)
+}
+
 pub fn first_test() {
   let queue = new_queue()
 
