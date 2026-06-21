@@ -10,7 +10,7 @@ Type-safe ETS tables, queues, and counters for Gleam.
 Requires OTP 27 or later.
 
 ```sh
-gleam add rasa@3
+gleam add rasa@2
 ```
 
 ## Usage

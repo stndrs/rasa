@@ -1,5 +1,5 @@
 name = "rasa"
-version = "3.0.0"
+version = "2.1.0"
 target = "erlang"
 
 description = "Type-safe ETS tables, queues, and counters for Gleam"
