@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-- **`queue.with_counter` signature change**: The `counter` argument now expects a `fn() -> Counter` instead of a `Counter` value. This defers counter creation until `queue.build` is called.
+- **`queue.with_counter` now takes an already-created `Counter` value, and a new `queue.with_lazy_counter` handles the function form**: `with_counter(builder, counter)` accepts a `Counter` value directly (e.g. one built with `counter.from_atomic` so you can retain a reference to the underlying `Atomic`). `with_lazy_counter(builder, fn() { counter })` takes a function invoked once when the queue is built, so each queue gets its own counter. Previously `with_counter` accepted only the function form.
 
 ### Fixed
 

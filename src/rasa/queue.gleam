@@ -53,8 +53,25 @@ pub fn with_access(builder: Builder, access: table.Access) -> Builder {
   Builder(..builder, access:)
 }
 
-/// Sets the counter on the `Builder`.
-pub fn with_counter(builder: Builder, counter: fn() -> Counter) -> Builder {
+/// Sets the counter on the `Builder` to an already-created `Counter` value.
+///
+/// Use this when you have a `Counter` in hand (for example, one built with
+/// `counter.from_atomic` so you can retain a reference to the underlying
+/// `Atomic`). To defer counter creation until the queue is built, use
+/// `with_lazy_counter` instead.
+pub fn with_counter(builder: Builder, counter: Counter) -> Builder {
+  Builder(..builder, counter: fn() { counter })
+}
+
+/// Sets the counter on the `Builder` using a function that returns a
+/// `Counter`. The function is invoked once when the queue is built, so each
+/// queue gets its own counter. Use this when the counter should be created
+/// fresh per queue; to pass an already-created `Counter` value, use
+/// `with_counter` instead.
+pub fn with_lazy_counter(
+  builder: Builder,
+  counter: fn() -> Counter,
+) -> Builder {
   Builder(..builder, counter:)
 }
 

@@ -1,4 +1,5 @@
 import gleam/erlang/process
+import rasa/atomic
 import rasa/counter
 import rasa/monotonic
 import rasa/queue
@@ -14,7 +15,7 @@ pub fn push_error_test() {
   // Counter where subsequent calls return the same value
   let queue =
     queue.new()
-    |> queue.with_counter(fn() { counter.new(fn() { 99 }) })
+    |> queue.with_lazy_counter(fn() { counter.new(fn() { 99 }) })
     |> queue.build
 
   let assert Ok(99) = queue.push(queue, 10)
@@ -344,10 +345,24 @@ pub fn unique_monotonic_size_test() {
   let assert Ok(2) = queue.size(queue)
 }
 
+pub fn counter_test() {
+  let a = atomic.new()
+  let counter = counter.from_atomic(a, atomic.add_get(_, 1))
+
+  let queue =
+    queue.new()
+    |> queue.with_access(table.Private)
+    |> queue.with_counter(counter)
+    |> queue.build
+
+  let assert Ok(1) = queue.push(queue, 10)
+  let assert Ok(2) = queue.push(queue, 20)
+}
+
 fn new_queue() {
   queue.new()
   |> queue.with_access(table.Private)
-  |> queue.with_counter(counter.atomic)
+  |> queue.with_lazy_counter(counter.atomic)
   |> queue.build
 }
 
@@ -356,13 +371,13 @@ fn new_monotonic_time_queue() {
 
   queue.new()
   |> queue.with_access(table.Private)
-  |> queue.with_counter(counter)
+  |> queue.with_lazy_counter(counter)
   |> queue.build
 }
 
 fn new_monotonic_queue() {
   queue.new()
   |> queue.with_access(table.Private)
-  |> queue.with_counter(counter.monotonic)
+  |> queue.with_lazy_counter(counter.monotonic)
   |> queue.build
 }

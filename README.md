@@ -54,7 +54,7 @@ import rasa/table
 
 pub fn main() -> Nil {
   let q = queue.new()
-  |> queue.with_counter(counter.atomic)
+  |> queue.with_lazy_counter(counter.atomic)
   |> queue.with_access(table.Private)
   |> queue.build
 
