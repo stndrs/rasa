@@ -1,4 +1,5 @@
 import gleam/erlang/process
+import rasa/atomic
 import rasa/counter
 import rasa/monotonic
 
@@ -29,6 +30,25 @@ pub fn independent_atomic_counter_test() {
   let assert 1 = counter.next(c1)
   let assert 2 = counter.next(c1)
   let assert 1 = counter.next(c2)
+}
+
+pub fn from_atomic_test() {
+  let c = counter.from_atomic(atomic.new(), atomic.add_get(_, 2))
+
+  let assert 2 = counter.next(c)
+  let assert 4 = counter.next(c)
+  let assert 6 = counter.next(c)
+}
+
+pub fn from_atomic_shared_test() {
+  let a = atomic.new()
+  let c = counter.from_atomic(a, atomic.add_get(_, 1))
+
+  let assert 1 = counter.next(c)
+  let assert 2 = counter.next(c)
+
+  // The retained reference reflects the counter's progress.
+  let assert 2 = atomic.get(a)
 }
 
 pub fn monotonic_time_counter_test() {

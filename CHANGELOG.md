@@ -18,7 +18,7 @@
 
 - **`table.delete_last` / `queue.pop_last`**: Remove and return the last entry of a table or queue. Combined with `delete_first`/`pop`, queues can now be used as double-ended queues. Like `delete_first`, the operation retries on `Public` tables if another process removes the last entry mid-operation.
 - **`table.delete_first` is now public**: Previously internal, it removes and returns the first entry of a table directly (the same operation `queue.pop` uses). Pairs with the new `table.delete_last`.
-- **`counter.atomic_with(start:, step:)`**: Create an atomic counter with a custom starting value and increment. `counter.atomic()` is equivalent to `counter.atomic_with(start: 1, step: 1)`.
+- **`counter.from_atomic`**: Create a `Counter` from an existing `Atomic` and a `fn(Atomic) -> Int` describing how to produce each value. Enables custom step sizes and starting values, and lets you retain a reference to the underlying atomic.
 - **`table.member`**: Check whether a key exists without copying its value out of the table. Returns `Ok(True)`/`Ok(False)`, or `Error(Nil)` if the table no longer exists.
 
 ## v2.0.0

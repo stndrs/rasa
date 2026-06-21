@@ -1,10 +1,11 @@
 //// Counters for generating sequential integer values. Counters are used by
 //// `rasa/queue` to index entries but can also be used on their own. Use
-//// `atomic` for a simple incrementing counter, `monotonic` for guaranteed
-//// unique monotonic values, `monotonic_time` for time-based monotonic values,
-//// or `new` to supply a custom function.
+//// `atomic` for a simple incrementing counter, `from_atomic` for a custom
+//// atomic counter, `monotonic` for guaranteed unique monotonic values,
+//// `monotonic_time` for time-based monotonic values, or `new` to supply a
+//// custom function.
 
-import rasa/atomic
+import rasa/atomic.{type Atomic}
 import rasa/monotonic
 
 /// A counter that produces integer values.
@@ -22,9 +23,22 @@ pub fn new(handle_next: fn() -> Int) -> Counter {
 /// `next`. Backed by `rasa/atomic`, each call to `next` is a single atomic
 /// add-and-get operation with no race conditions.
 pub fn atomic() -> Counter {
-  let a = atomic.new()
+  from_atomic(atomic.new(), atomic.add_get(_, 1))
+}
 
-  Counter(handle_next: fn() { atomic.add_get(a, 1) })
+/// Creates a `Counter` from an existing `Atomic` and a function describing how
+/// to produce the next value from it. The `handle_next` function receives the
+/// `Atomic` and is called each time the counter is passed to `next`.
+///
+/// Useful for custom step sizes or starting values, or when you need to retain
+/// a reference to the underlying `Atomic` (e.g. to read or reset it):
+///
+/// ```gleam
+/// let a = atomic.new()
+/// let c = counter.from_atomic(a, atomic.add_get(_, 2))
+/// ```
+pub fn from_atomic(atomic: Atomic, handle_next: fn(Atomic) -> Int) -> Counter {
+  Counter(handle_next: fn() { handle_next(atomic) })
 }
 
 /// Returns a `Counter` tied to erlang's [monotonic_time][1]. This counter
