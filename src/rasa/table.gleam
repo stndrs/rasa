@@ -78,9 +78,7 @@ pub fn lookup(table: Table(a, b), key: a) -> Result(b, Nil) {
 }
 
 /// Returns `Ok(True)` if the table contains the given key, `Ok(False)` if it
-/// does not, or `Error(Nil)` if the table does not exist. Cheaper than
-/// `lookup` when the value is not needed, since it does not copy the value
-/// out of the table.
+/// does not, or `Error(Nil)` if the table does not exist.
 pub fn member(table: Table(a, b), key: a) -> Result(Bool, Nil) {
   ets_member_(table.ref, key)
 }
