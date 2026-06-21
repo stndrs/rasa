@@ -1,10 +1,6 @@
 # Changelog
 
-## v3.0.0
-
-### Breaking changes
-
-- **`queue.with_counter` signature change**: The `counter` argument now expects a `fn() -> Counter` instead of a `Counter` value. This defers counter creation until `queue.build` is called.
+## v2.1.0
 
 ### Fixed
 
@@ -16,6 +12,7 @@
 
 ### New features
 
+- **`queue.with_lazy_counter`**: A second counter builder method that accepts a `fn() -> Counter` invoked once when the queue is built, so each queue gets its own counter. The existing `queue.with_counter` (which takes a `Counter` value directly) is unchanged.
 - **`table.delete_last` / `queue.pop_last`**: Remove and return the last entry of a table or queue. Combined with `delete_first`/`pop`, queues can now be used as double-ended queues. Like `delete_first`, the operation retries on `Public` tables if another process removes the last entry mid-operation.
 - **`table.delete_first` is now public**: Previously internal, it removes and returns the first entry of a table directly (the same operation `queue.pop` uses). Pairs with the new `table.delete_last`.
 - **`counter.from_atomic`**: Create a `Counter` from an existing `Atomic` and a `fn(Atomic) -> Int` describing how to produce each value. Enables custom step sizes and starting values, and lets you retain a reference to the underlying atomic.
